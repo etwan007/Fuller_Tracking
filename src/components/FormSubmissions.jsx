@@ -25,7 +25,7 @@ export default function FormSubmissions() {
     // Add your logic to update the backend here (confirm, deny, etc)
   };
 
-  const headers = formResponses[0] || ['Project Name', 'Description', 'Due Date'];
+  const headers = formResponses[0] || ['Time Submitted', 'Project Name', 'Description', 'Due Date'];
 
   return (
     <section className="mt-6">

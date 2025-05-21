@@ -23,7 +23,7 @@ export default async function handler(req, res) {
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: sheetId,
-      range: 'A1:C1000', // Adjust as needed
+      range: 'A1:D1000', // Adjust as needed
     });
 
     const rows = response.data.values || [];
