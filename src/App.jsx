@@ -115,17 +115,25 @@ export default function App() {
       )}
 
       {githubData && (
-        <Card className="mt-6">
-          <CardContent>
-            <h2 className="font-semibold mb-2">GitHub Repositories:</h2>
-            <ul className="list-disc ml-5 max-h-48 overflow-auto">
-              {githubData.files?.map((file, idx) => (
-                <li key={idx}>{file.path}</li>
-              )) || <li>No repositories found</li>}
-            </ul>
-          </CardContent>
-        </Card>
-      )}
+  <Card className="mt-6">
+    <CardContent>
+      <h2 className="font-semibold mb-2">GitHub Repositories:</h2>
+      <ul className="list-disc ml-5 max-h-48 overflow-auto">
+        {githubData.length > 0 ? (
+          githubData.map((repo, idx) => (
+            <li key={idx}>
+              <a href={repo.html_url} target="_blank" rel="noreferrer">
+                {repo.name}
+              </a>
+            </li>
+          ))
+        ) : (
+          <li>No repositories found</li>
+        )}
+      </ul>
+    </CardContent>
+  </Card>
+)}
 
       <section className="mt-8 p-4 bg-white rounded shadow">
         <h2 className="text-lg font-bold mb-3">Google Integration</h2>
