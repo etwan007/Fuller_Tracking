@@ -160,7 +160,7 @@ export default function App() {
     <table className="w-full border text-sm">
       <thead>
         <tr>
-          {(formResponses?.[0] || ['Project Name', 'Description', 'Due Date']).map((header, i) => (
+          {(formResponses?.[0] || ['Time Submitted', 'Project Name', 'Description', 'Due Date']).map((header, i) => (
             <th key={i} className="border p-1">{header}</th>
           ))}
         </tr>
