@@ -1,5 +1,5 @@
 // /api/github-callback.js
-import fetch from 'node-fetch';
+
 import { serialize } from 'cookie';
 
 export default async function githubCallbackHandler(req, res) {
