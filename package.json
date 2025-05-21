@@ -4,16 +4,16 @@
   "description": "Personal project manager",
   "main": "index.js",
   "scripts": {
-  "dev": "vite",
-  "build": "vite build",
-  "preview": "vite preview",
-  "postinstall": "chmod +x node_modules/.bin/vite"
-}
-,
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "postinstall": "chmod +x node_modules/.bin/vite"
+  },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "node-fetch": "^3.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "vite": "^4.4.0"
