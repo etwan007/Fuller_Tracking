@@ -1,8 +1,8 @@
-// --- File: /api/github-callback.js ---
+// /api/github-callback.js
 import fetch from 'node-fetch';
 import { serialize } from 'cookie';
 
-export async function githubCallbackHandler(req, res) {
+export default async function githubCallbackHandler(req, res) {
   const { code } = req.query;
 
   if (!code) {
@@ -12,6 +12,11 @@ export async function githubCallbackHandler(req, res) {
 
   const clientId = process.env.GITHUB_CLIENT_ID;
   const clientSecret = process.env.GITHUB_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) {
+    res.status(500).send('Missing GitHub client ID or secret');
+    return;
+  }
 
   const tokenRes = await fetch(`https://github.com/login/oauth/access_token`, {
     method: 'POST',
