@@ -1,40 +1,43 @@
-// --- File: /api/github-create-repo.js ---
-import fetch from 'node-fetch';
+export default async function githubCreateRepoHandler(req, res) {
+  const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
-export async function githubCreateRepoHandler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    res.status(405).json({ error: 'Method not allowed' });
+    return;
   }
 
-  const token = req.cookies?.github_token;
-  if (!token) {
-    return res.status(401).json({ error: 'Not authenticated' });
+  const githubToken = req.cookies.github_token;
+  if (!githubToken) {
+    res.status(401).json({ error: 'Unauthorized: No GitHub token' });
+    return;
   }
 
-  const { repoName } = req.body;
-  if (!repoName || repoName.trim().length === 0) {
-    return res.status(400).json({ error: 'Invalid repo name' });
+  const { name } = req.body;
+  if (!name || !name.trim()) {
+    res.status(400).json({ error: 'Repository name required' });
+    return;
   }
 
-  const response = await fetch('https://api.github.com/user/repos', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      name: repoName.trim(),
-      description: 'Repository created via Fuller Tracking app',
-      private: false,
-      auto_init: true,
-    }),
-  });
+  try {
+    const response = await fetch('https://api.github.com/user/repos', {
+      method: 'POST',
+      headers: {
+        Authorization: `token ${githubToken}`,
+        Accept: 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name }),
+    });
 
-  if (!response.ok) {
-    const errData = await response.json();
-    return res.status(response.status).json({ error: errData.message || 'Failed to create repo' });
+    if (!response.ok) {
+      const errorData = await response.json();
+      res.status(response.status).json({ error: errorData.message || 'Failed to create repo' });
+      return;
+    }
+
+    const repoData = await response.json();
+    res.status(200).json({ success: true, repo: repoData });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-
-  res.status(200).json({ message: `Repository "${repoName}" created successfully.` });
 }
