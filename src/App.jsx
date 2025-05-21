@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from './components/Button';
 import { Card, CardContent } from './components/Card';
-import { GoogleLogin } from './GoogleLogin';
+import { GoogleLogin } from './components/GoogleLogin';
 
 export default function App() {
   const [projectName, setProjectName] = useState('');
