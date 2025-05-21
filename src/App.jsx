@@ -183,4 +183,4 @@ export default function App() {
   </table>
     </section>
   </section>
-</main>)
+</main>)}
