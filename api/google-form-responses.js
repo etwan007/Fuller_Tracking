@@ -1,25 +1,35 @@
-import fetch from 'node-fetch';
+import { google } from 'googleapis';
 
 export default async function handler(req, res) {
-  const token = req.cookies.google_access_token;
-  const sheetId = process.env.GOOGLE_SHEET_ID;
-  if (!token) return res.status(401).json({ error: 'Not authenticated' });
-  if (!sheetId) return res.status(500).json({ error: 'Missing sheet ID' });
+  try {
+    const sheetId = process.env.GOOGLE_SHEET_ID;
+    const key = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
 
-  // Reading form responses from the first sheet
-  const sheetRes = await fetch(
-    `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A1:Z1000`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
+    if (!sheetId || !key) {
+      return res.status(500).json({ error: 'Missing environment variables' });
     }
-  );
 
-  if (!sheetRes.ok) {
-    return res.status(sheetRes.status).json(await sheetRes.json());
+    const credentials = JSON.parse(key);
+    const scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
+
+    const auth = new google.auth.JWT(
+      credentials.client_email,
+      null,
+      credentials.private_key,
+      scopes
+    );
+
+    const sheets = google.sheets({ version: 'v4', auth });
+
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: sheetId,
+      range: 'A1:C1000', // Adjust as needed
+    });
+
+    const rows = response.data.values || [];
+    res.status(200).json({ values: rows });
+  } catch (error) {
+    console.error('Error fetching form data:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-
-  const data = await sheetRes.json();
-  // data.values is array of rows; first row is headers, rest are responses
-
-  res.status(200).json(data);
 }
