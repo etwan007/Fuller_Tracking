@@ -153,7 +153,7 @@ export default function App() {
           </ul>
         )}
 
-        
+
 
   <section className="mt-4">
   <h2 className="text-lg font-bold mb-2">Form Submissions</h2>
@@ -166,13 +166,19 @@ export default function App() {
       </tr>
     </thead>
     <tbody>
-      {formResponses?.slice(1).map((row, i) => (
-        <tr key={i}>
-          {row.map((cell, j) => <td key={j} className="border p-1">{cell}</td>)}
-        </tr>
-      )) || (
-        <tr><td colSpan={3} className="text-center p-2">No submissions yet.</td></tr>
-      )}
-    </tbody>
-  </table>
+  {formResponses?.slice(1).length > 0 ? (
+    formResponses.slice(1).map((row, i) => (
+      <tr key={i}>
+        {row.map((cell, j) => (
+          <td key={j} className="border p-1">{cell}</td>
+        ))}
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan={3} className="text-center p-2">No submissions yet.</td>
+    </tr>
+  )}
+</tbody>
+</table>
 </section>
