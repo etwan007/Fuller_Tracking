@@ -119,17 +119,17 @@ export default function App() {
     <CardContent>
       <h2 className="font-semibold mb-2">GitHub Repositories:</h2>
       <ul className="list-disc ml-5 max-h-48 overflow-auto">
-        {githubData.length > 0 ? (
-          githubData.map((repo, idx) => (
-            <li key={idx}>
-              <a href={repo.html_url} target="_blank" rel="noreferrer">
-                {repo.name}
-              </a>
-            </li>
-          ))
-        ) : (
-          <li>No repositories found</li>
-        )}
+        {githubData.files?.length > 0 ? (
+  githubData.files.map((repo, idx) => (
+    <li key={idx}>
+      <a href={repo.html_url} target="_blank" rel="noreferrer">
+        {repo.name}
+      </a>
+    </li>
+  ))
+) : (
+  <li>No repositories found</li>
+)}
       </ul>
     </CardContent>
   </Card>
