@@ -3,6 +3,7 @@ import { Button } from './components/Button';
 import { Card, CardContent } from './components/Card';
 import { GoogleLogin } from './components/GoogleLogin';
 
+
 export default function App() {
     const [projectName, setProjectName] = useState('');
     const [aiSuggestion, setAiSuggestion] = useState('');
@@ -85,6 +86,13 @@ export default function App() {
         alert('Failed to fetch form responses');
       }
     }
+   
+    useEffect(() => {
+      fetchFormResponses(); // fetch on first load
+      const interval = setInterval(fetchFormResponses, 10000); // fetch every 10 seconds
+      return () => clearInterval(interval); // clean up
+    }, []);
+
 
     return (
       <main className="p-4 max-w-xl mx-auto bg-gray-50 min-h-screen">
