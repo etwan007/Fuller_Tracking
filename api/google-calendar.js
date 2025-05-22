@@ -1,20 +1,24 @@
-import fetch from 'node-fetch';
-
 export default async function handler(req, res) {
-  const token = req.cookies.google_access_token;
-  if (!token) return res.status(401).json({ error: 'Not authenticated' });
+  const token = req.query.access_token; // or get from cookie if you used cookies
+  if (!token) return res.status(401).json({ error: 'Missing access_token' });
 
-  const calendarRes = await fetch(
-    'https://www.googleapis.com/calendar/v3/calendars/primary/events?maxResults=10&orderBy=startTime&singleEvents=true&timeMin=' + new Date().toISOString(),
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
+  const auth = new google.auth.OAuth2();
+  auth.setCredentials({ access_token: token });
 
-  if (!calendarRes.ok) {
-    return res.status(calendarRes.status).json(await calendarRes.json());
+  const calendar = google.calendar({ version: 'v3', auth });
+
+  try {
+    const response = await calendar.events.list({
+      calendarId: 'primary',
+      timeMin: new Date().toISOString(),
+      maxResults: 10,
+      singleEvents: true,
+      orderBy: 'startTime',
+    });
+
+    res.status(200).json(response.data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch calendar events' });
   }
-
-  const data = await calendarRes.json();
-  res.status(200).json(data);
 }
