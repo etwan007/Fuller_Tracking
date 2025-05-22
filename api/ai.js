@@ -22,7 +22,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'openai/gpt-3.5-turbo', // You can change to another free model if you want
+        model: 'deepseek/deepseek-chat-v3-0324', // You can change to another free model if you want
         messages: [
           { role: 'system', content: 'You are a helpful assistant.' },
           { role: 'user', content: prompt }
