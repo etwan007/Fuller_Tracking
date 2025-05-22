@@ -16,10 +16,15 @@ export default function App() {
   const [calendarEvents, setCalendarEvents] = useState(null); // * Stores Google Calendar events
   const [formResponses, setFormResponses] = useState(null); // * Stores Google Form responses
 
+  // * New state for clarification/modification
+  const [clarification, setClarification] = useState(''); // * Stores user clarification or modification input
+  const [clarifiedSuggestion, setClarifiedSuggestion] = useState(''); // * Stores the AI's clarified/modified response
+  const [selectedBullet, setSelectedBullet] = useState(''); // * Stores the bullet selected by the user
+
   // * Handles AI suggestion generation using the project name
   async function handleAISuggestion() {
     if (!projectName.trim()) return; // ? Guard: Don't run if input is empty
-    const prompt = `Give me some direction on what to do with this project idea. Only a few bullet points with 1-2 sentences for each, with general ideas and the viability for each. Put a new line in between each bullet point: ${projectName}`; // * Prompt for AI
+    const prompt = `Give me some direction on what to do with this project idea. Only a few bullet points with 1-2 sentences for each, with general ideas and the viability for each. Also include a Project name that would be applicable to the ideas in the bullet point at the beginning of the bullet point. Put a new line in between each bullet point: ${projectName}`; // * Prompt for AI
 
     // * Call backend API to get AI suggestion
     const res = await fetch('/api/ai', {
@@ -29,6 +34,47 @@ export default function App() {
     });
     const data = await res.json();
     setAiSuggestion(data.response); // * Update state with AI's response
+    setClarifiedSuggestion(''); // * Clear previous clarifications
+    setSelectedBullet(''); // * Clear selected bullet
+  }
+
+  // * Handles clarification/modification requests
+  async function handleClarification() {
+    if (!clarification.trim()) return; // ? Guard: Don't run if clarification is empty
+    const prompt = `Given the previous project idea: "${projectName}", and the previous breakdown: "${clarifiedSuggestion || aiSuggestion}", here is a clarification or modification: "${clarification}". Please provide an updated breakdown as bullet points. Follow the same guidlines as the initial prompt.`; // * Prompt for AI clarification
+
+    // * Call backend API to get clarified/modified suggestion
+    const res = await fetch('/api/ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt }),
+    });
+    const data = await res.json();
+    setClarifiedSuggestion(data.response); // * Update state with clarified/modified response
+    setClarification(''); // * Clear clarification input
+    setSelectedBullet(''); // * Clear selected bullet
+  }
+
+  // * Handles selecting a bullet and creating a repo with its project name
+  async function handleSelectBullet(bullet) {
+    // Extract the project name (assume it's the first word or phrase before a colon or dash)
+    let name = bullet.split(':')[0].split('-')[0].trim();
+    if (!name) name = bullet.trim();
+    setProjectName(name); // * Update project name
+
+    // Create the repo
+    const res = await fetch('/api/github-create-repo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert(`GitHub repository "${name}" created!`);
+      fetchGitHubFiles(); // * Refresh repo list
+    } else {
+      alert('Failed to create repo: ' + (data.error || 'Unknown error'));
+    }
   }
 
   // * Initiates GitHub OAuth login flow
@@ -122,6 +168,9 @@ export default function App() {
     return () => clearInterval(interval); // * Cleanup on unmount
   }, []);
 
+  // * Helper to get the current breakdown (clarified or original)
+  const currentBreakdown = clarifiedSuggestion || aiSuggestion;
+
   // ! Render the UI
   return (
     <main className="p-4 max-w-xl mx-auto bg-gray-50 min-h-screen">
@@ -151,13 +200,61 @@ export default function App() {
           <CardContent>
             <h2 className="font-semibold mb-2">AI Suggestion:</h2>
             <ul className="list-disc ml-5">
-              {aiSuggestion
+              {(clarifiedSuggestion || aiSuggestion)
                 .split('\n')
                 .filter(line => line.trim() !== '')
                 .map((line, idx) => (
-                  <li key={idx}>{line.replace(/^[\-\*\d\.\s]+/, '')}</li>
+                  <li
+                    key={idx}
+                    className={`cursor-pointer hover:bg-blue-100 rounded px-1 ${selectedBullet === line ? 'bg-blue-200 font-bold' : ''}`}
+                    onClick={() => setSelectedBullet(line)}
+                    title="Click to select this bullet"
+                  >
+                    {line.replace(/^[\-\*\d\.\s]+/, '')}
+                  </li>
                 ))}
             </ul>
+            {/* * Show "Create Repo" button if a bullet is selected */}
+            {selectedBullet && (
+              <div className="mt-3 flex items-center gap-2">
+                <span className="text-sm font-semibold">Selected:</span>
+                <span className="italic">{selectedBullet.replace(/^[\-\*\d\.\s]+/, '')}</span>
+                <Button onClick={() => handleSelectBullet(selectedBullet)}>
+                  Make Repo from This
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* * Clarification/Modification Box */}
+      {aiSuggestion && (
+        <Card className="mt-6">
+          <CardContent>
+            <h2 className="font-semibold mb-2">Clarify or Modify Breakdown</h2>
+            <textarea
+              className="w-full p-2 border rounded mb-2"
+              placeholder="Add clarifications or modifications to your project idea..."
+              value={clarification}
+              onChange={e => setClarification(e.target.value)}
+              rows={3}
+            />
+            <Button onClick={handleClarification}>Submit Clarification</Button>
+            {/* * Show clarified/modified response */}
+            {clarifiedSuggestion && (
+              <div className="mt-4">
+                <h3 className="font-semibold mb-1">Updated Breakdown:</h3>
+                <ul className="list-disc ml-5">
+                  {clarifiedSuggestion
+                    .split('\n')
+                    .filter(line => line.trim() !== '')
+                    .map((line, idx) => (
+                      <li key={idx}>{line.replace(/^[\-\*\d\.\s]+/, '')}</li>
+                    ))}
+                </ul>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
