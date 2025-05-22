@@ -167,7 +167,7 @@ export default function App() {
 
         <section className="mt-8 p-4 bg-white rounded shadow">
           <h2 className="text-lg font-bold mb-3">Google Integration</h2>
-          <GoogleLogin onLogin={handleGoogleLogin} />
+          <GoogleLogin /> {/* <-- Remove onLogin={handleGoogleLogin} */}
           <div className="flex gap-2 mt-3">
             <Button onClick={fetchCalendar}>Fetch Calendar Events</Button>
             <Button onClick={fetchFormResponses}>Fetch Form Responses</Button>
