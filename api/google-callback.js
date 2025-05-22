@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     
     // Option 2 (safer): Set HTTP-only cookie and redirect normally
     res.setHeader('Set-Cookie', `access_token=${tokens.access_token}; Path=/; HttpOnly; Secure; SameSite=Lax`);
-    return res.redirect(`/app?access_token=${tokens.access_token}`);
+    return res.redirect(`/?access_token=${tokens.access_token}`);
 
   } catch (err) {
     console.error('Error exchanging code for tokens:', err);
