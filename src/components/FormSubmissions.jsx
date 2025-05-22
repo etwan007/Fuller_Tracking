@@ -7,6 +7,7 @@ export default function FormSubmissions() {
     try {
       const res = await fetch('/api/google-form-responses');
       const data = await res.json();
+      console.log('Fetched form data:', data); // ✅ Log output
       setFormResponses(data.values || []);
     } catch (err) {
       console.error('Failed to fetch form responses:', err);
@@ -14,23 +15,24 @@ export default function FormSubmissions() {
   };
 
   useEffect(() => {
-    fetchFormResponses(); // Initial fetch
-    const interval = setInterval(fetchFormResponses, 10000); // Poll every 10s
-    return () => clearInterval(interval); // Cleanup
+    fetchFormResponses();
+    const interval = setInterval(fetchFormResponses, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleAction = (action, rowIndex) => {
-    const row = formResponses[rowIndex + 1]; // +1 to skip header
+    const row = formResponses[rowIndex + 1]; // +1 for header
     console.log(`${action} request for:`, row);
-    // Add your logic to update the backend here (confirm, deny, etc)
   };
 
-  const headers = formResponses[0] || ['Time Submitted', 'Project Name', 'Description', 'Due Date'];
+  const headers =
+    formResponses.length > 0 && formResponses[0].length > 0
+      ? formResponses[0]
+      : ['Time Submitted', 'Project Name', 'Description', 'Due Date'];
 
   return (
     <section className="mt-6">
       <h2 className="text-xl font-bold mb-4">Form Submissions</h2>
-
       <table className="w-full border text-sm">
         <thead>
           <tr>
@@ -44,8 +46,8 @@ export default function FormSubmissions() {
           {formResponses.length > 1 ? (
             formResponses.slice(1).map((row, i) => (
               <tr key={i}>
-                {row.map((cell, j) => (
-                  <td key={j} className="border p-2">{cell}</td>
+                {headers.map((_, j) => (
+                  <td key={j} className="border p-2">{row[j] || ''}</td>
                 ))}
                 <td className="border p-2 space-x-2">
                   <button className="text-blue-600" onClick={() => handleAction('edit', i)}>Edit</button>
