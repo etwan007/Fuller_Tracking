@@ -55,21 +55,6 @@ export default function App() {
       }
   }
 
-  async function handleGoogleLogin(idToken) {
-  const res = await fetch('/api/google-oauth', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ idToken }),
-  });
-
-  const data = await res.json();
-
-  if (data.access_token) {
-    localStorage.setItem('google_access_token', data.access_token);
-    alert('Google login successful!');
-    fetchCalendar(); // <--- Call it right after login
-  }
-}
 
 
 
