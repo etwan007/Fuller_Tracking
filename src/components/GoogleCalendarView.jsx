@@ -1,7 +1,7 @@
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import '@fullcalendar/common/main.css';
-import '@fullcalendar/daygrid/main.css';
+import '@fullcalendar/common/main.min.css';
+import '@fullcalendar/daygrid/main.min.css';
 
 function mapGoogleEventsToFullCalendar(events) {
   if (!events) return [];
