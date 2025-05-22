@@ -19,7 +19,7 @@ export default function App() {
   // * Handles AI suggestion generation using the project name
   async function handleAISuggestion() {
     if (!projectName.trim()) return; // ? Guard: Don't run if input is empty
-    const prompt = `Give me a breakdown for a project idea: ${projectName}`; // * Prompt for AI
+    const prompt = `Give me some direction on what to do with this project idea. Only a few bullet points with 1-2 sentences for each, with general ideas and the viability for each. Put a new line in between each bullet point: ${projectName}`; // * Prompt for AI
 
     // * Call backend API to get AI suggestion
     const res = await fetch('/api/ai', {
@@ -150,7 +150,14 @@ export default function App() {
         <Card className="mt-6">
           <CardContent>
             <h2 className="font-semibold mb-2">AI Suggestion:</h2>
-            <p>{aiSuggestion}</p>
+            <ul className="list-disc ml-5">
+              {aiSuggestion
+                .split('\n')
+                .filter(line => line.trim() !== '')
+                .map((line, idx) => (
+                  <li key={idx}>{line.replace(/^[\-\*\d\.\s]+/, '')}</li>
+                ))}
+            </ul>
           </CardContent>
         </Card>
       )}
