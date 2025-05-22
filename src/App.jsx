@@ -1,11 +1,9 @@
 // ! Import React hooks and custom components
-import { useState } from 'react'; // * React hook for state management
+import { useState, useEffect } from 'react'; // * React hooks for state management and side effects
 import { Button } from './components/Button'; // * Custom Button component
 import { Card, CardContent } from './components/Card'; // * Custom Card components for UI
 import { GoogleLogin } from './components/GoogleLogin'; // * Google OAuth login button
 import { GoogleCalendarView } from './components/GoogleCalendarView'; // * Calendar display component
-
-import { useEffect } from 'react'; // * React hook for side effects
 
 // ! Main App component
 export default function App() {
@@ -16,15 +14,19 @@ export default function App() {
   const [calendarEvents, setCalendarEvents] = useState(null); // * Stores Google Calendar events
   const [formResponses, setFormResponses] = useState(null); // * Stores Google Form responses
 
-  // * New state for clarification/modification
+  // * State for clarification/modification and bullet selection
   const [clarification, setClarification] = useState(''); // * Stores user clarification or modification input
-  const [clarifiedSuggestion, setClarifiedSuggestion] = useState(''); // * Stores the AI's clarified/modified response
+  const [currentBreakdown, setCurrentBreakdown] = useState(''); // * Stores the AI's clarified/modified response
   const [selectedBullet, setSelectedBullet] = useState(''); // * Stores the bullet selected by the user
+  const [loading, setLoading] = useState(false); // * Indicator for AI loading
 
   // * Handles AI suggestion generation using the project name
   async function handleAISuggestion() {
     if (!projectName.trim()) return; // ? Guard: Don't run if input is empty
-    const prompt = `Give me some direction on what to do with this project idea. Only a few bullet points with 1-2 sentences for each, with general ideas and the viability for each. Also include a Project name that would be applicable to the ideas in the bullet point at the beginning of the bullet point. Put a new line in between each bullet point: ${projectName}`; // * Prompt for AI
+    setLoading(true); // * Set loading state
+    setSelectedBullet(''); // * Clear selected bullet
+    setClarification(''); // * Clear previous clarifications
+    const prompt = `Give me some direction on what to do with this project idea. Give me 5 ideas, each with 2 sentences. Each Idea should have one bullet point, starting with a Unique Project name relating to the contents for each idea. Seperate each idea with a new line.: ${projectName}`; // * Prompt for AI
 
     // * Call backend API to get AI suggestion
     const res = await fetch('/api/ai', {
@@ -34,14 +36,16 @@ export default function App() {
     });
     const data = await res.json();
     setAiSuggestion(data.response); // * Update state with AI's response
-    setClarifiedSuggestion(''); // * Clear previous clarifications
-    setSelectedBullet(''); // * Clear selected bullet
+    setCurrentBreakdown(data.response); // * Update current breakdown
+    setLoading(false); // * Clear loading state
   }
 
   // * Handles clarification/modification requests
   async function handleClarification() {
     if (!clarification.trim()) return; // ? Guard: Don't run if clarification is empty
-    const prompt = `Given the previous project idea: "${projectName}", and the previous breakdown: "${clarifiedSuggestion || aiSuggestion}", here is a clarification or modification: "${clarification}". Please provide an updated breakdown as bullet points. Follow the same guidlines as the initial prompt.`; // * Prompt for AI clarification
+    setLoading(true); // * Set loading state
+    setSelectedBullet(''); // * Clear selected bullet
+    const prompt = `Given the previous project idea: "${projectName}", and the previous breakdown: "${currentBreakdown}", here is a clarification or modification: "${clarification}". Please provide an updated breakdown as bullet points. Follow the same guidlines as the initial prompt.`; // * Prompt for AI clarification
 
     // * Call backend API to get clarified/modified suggestion
     const res = await fetch('/api/ai', {
@@ -50,9 +54,9 @@ export default function App() {
       body: JSON.stringify({ prompt }),
     });
     const data = await res.json();
-    setClarifiedSuggestion(data.response); // * Update state with clarified/modified response
+    setCurrentBreakdown(data.response); // * Update state with clarified/modified response
     setClarification(''); // * Clear clarification input
-    setSelectedBullet(''); // * Clear selected bullet
+    setLoading(false); // * Clear loading state
   }
 
   // * Handles selecting a bullet and creating a repo with its project name
@@ -168,8 +172,8 @@ export default function App() {
     return () => clearInterval(interval); // * Cleanup on unmount
   }, []);
 
-  // * Helper to get the current breakdown (clarified or original)
-  const currentBreakdown = clarifiedSuggestion || aiSuggestion;
+  // * Helper: Use currentBreakdown if available, else aiSuggestion
+  const breakdownToShow = currentBreakdown || aiSuggestion;
 
   // ! Render the UI
   return (
@@ -194,13 +198,20 @@ export default function App() {
         <Button onClick={createGitHubRepo}>Create GitHub Repo</Button>
       </div>
 
-      {/* * AI Suggestion Card */}
-      {aiSuggestion && (
+      {/* * AI Suggestion & Clarification Card */}
+      {breakdownToShow && (
         <Card className="mt-6">
           <CardContent>
-            <h2 className="font-semibold mb-2">AI Suggestion:</h2>
+            <h2 className="font-semibold mb-2">AI Breakdown</h2>
+            {/* * Loading indicator */}
+            {loading && (
+              <div className="mb-2 text-blue-600 flex items-center gap-2">
+                <span className="animate-spin inline-block w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full"></span>
+                Generating AI response...
+              </div>
+            )}
             <ul className="list-disc ml-5">
-              {(clarifiedSuggestion || aiSuggestion)
+              {breakdownToShow
                 .split('\n')
                 .filter(line => line.trim() !== '')
                 .map((line, idx) => (
@@ -224,37 +235,21 @@ export default function App() {
                 </Button>
               </div>
             )}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* * Clarification/Modification Box */}
-      {aiSuggestion && (
-        <Card className="mt-6">
-          <CardContent>
-            <h2 className="font-semibold mb-2">Clarify or Modify Breakdown</h2>
-            <textarea
-              className="w-full p-2 border rounded mb-2"
-              placeholder="Add clarifications or modifications to your project idea..."
-              value={clarification}
-              onChange={e => setClarification(e.target.value)}
-              rows={3}
-            />
-            <Button onClick={handleClarification}>Submit Clarification</Button>
-            {/* * Show clarified/modified response */}
-            {clarifiedSuggestion && (
-              <div className="mt-4">
-                <h3 className="font-semibold mb-1">Updated Breakdown:</h3>
-                <ul className="list-disc ml-5">
-                  {clarifiedSuggestion
-                    .split('\n')
-                    .filter(line => line.trim() !== '')
-                    .map((line, idx) => (
-                      <li key={idx}>{line.replace(/^[\-\*\d\.\s]+/, '')}</li>
-                    ))}
-                </ul>
-              </div>
-            )}
+            {/* * Clarification/Modification Box */}
+            <div className="mt-6">
+              <h2 className="font-semibold mb-2">Clarify or Modify Breakdown</h2>
+              <textarea
+                className="w-full p-2 border rounded mb-2"
+                placeholder="Add clarifications or modifications to your project idea..."
+                value={clarification}
+                onChange={e => setClarification(e.target.value)}
+                rows={3}
+                disabled={loading}
+              />
+              <Button onClick={handleClarification} disabled={loading || !clarification.trim()}>
+                Submit Clarification
+              </Button>
+            </div>
           </CardContent>
         </Card>
       )}
