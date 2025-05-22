@@ -31,6 +31,14 @@ export default async function handler(req, res) {
     });
 
     const data = await openRouterRes.json();
+
+    // Log the response for debugging
+    console.log('OpenRouter response:', data);
+
+    if (data.error) {
+      return res.status(500).json({ error: data.error.message || 'OpenRouter error' });
+    }
+
     const aiResponse = data.choices?.[0]?.message?.content || 'No response from AI.';
     res.status(200).json({ response: aiResponse });
   } catch (err) {
