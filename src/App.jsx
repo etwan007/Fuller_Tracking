@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Button } from './components/Button';
 import { Card, CardContent } from './components/Card';
 import { GoogleLogin } from './components/GoogleLogin';
+import { GoogleCalendarView } from './components/GoogleCalendarView';
+
 import { useEffect } from 'react';
 
 
@@ -54,9 +56,6 @@ export default function App() {
         alert('Failed to create repo: ' + (data.error || 'Unknown error'));
       }
   }
-
-
-
 
 
   async function fetchCalendar() {
@@ -173,17 +172,11 @@ export default function App() {
             <Button onClick={fetchFormResponses}>Fetch Form Responses</Button>
           </div>
 
-          {calendarEvents && (
-            <ul className="list-disc ml-5 mt-4">
-              {calendarEvents.map((ev) => (
-                <li key={ev.id}>
-                  {ev.summary} — {new Date(ev.start.dateTime || ev.start.date).toLocaleString()}
-                </li>
-              ))}
-            </ul>
+          {calendarEvents && calendarEvents.length > 0 && (
+            <div className="mt-6">
+              <GoogleCalendarView events={calendarEvents} />
+            </div>
           )}
-
-
 
           <section className="mt-4">
             <h2 className="text-lg font-bold mb-2">Form Submissions</h2>
