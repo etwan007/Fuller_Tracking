@@ -55,28 +55,43 @@ export default function App() {
       }
   }
 
-  async function handleGoogleLogin() {
-    const res = await fetch('/api/google-login');
-    const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
-    }
+  async function handleGoogleLogin(idToken) {
+  const res = await fetch('/api/google-oauth', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idToken }),
+  });
+
+  const data = await res.json();
+
+  if (data.access_token) {
+    localStorage.setItem('google_access_token', data.access_token);
+    alert('Google login successful!');
+    fetchCalendar(); // <--- Call it right after login
   }
+}
+
 
 
 
   async function fetchCalendar() {
-    const token = localStorage.getItem('google_access_token');
-    if (!token) return alert('Login with Google first.');
+  const accessToken = localStorage.getItem('google_access_token');
+  if (!accessToken) return alert('No access token available.');
 
-    const res = await fetch(`/api/google-calendar?access_token=${token}`);
-    if (res.ok) {
-      const data = await res.json();
-      setCalendarEvents(data.items || []);
-    } else {
-      alert('Failed to fetch calendar events');
+  const res = await fetch('/api/google-calendar', {
+    headers: {
+      Authorization: `Bearer ${accessToken}`
     }
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    setCalendarEvents(data.items || []);
+  } else {
+    alert('Failed to fetch calendar events');
   }
+}
+
 
 
 
@@ -91,15 +106,29 @@ export default function App() {
   }
    
   useEffect(() => {
-      fetchFormResponses(); // fetch on first load
-      const interval = setInterval(fetchFormResponses, 10000); // fetch every 10 seconds
-      
-      const token = localStorage.getItem('google_access_token');
-      if (token) {
-        fetchCalendar();
-      }
-      return () => clearInterval(interval); // clean up
-  }, []);
+    // Save access_token from URL if redirected from Google
+    const url = new URL(window.location.href);
+    const token = url.searchParams.get('access_token');
+
+    if (token) {
+      localStorage.setItem('google_access_token', token);
+      setTimeout(() => {
+        // Remove token from URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }, 100);
+
+      // Fetch calendar events
+    fetchCalendar();
+    } else {
+      const existingToken = localStorage.getItem('google_access_token');
+      if (existingToken) fetchCalendar();
+    }
+
+  fetchFormResponses(); // already existing
+  const interval = setInterval(fetchFormResponses, 10000);
+  return () => clearInterval(interval);
+}, []);
+
 
 
   return (
