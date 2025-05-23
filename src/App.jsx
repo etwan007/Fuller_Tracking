@@ -168,6 +168,7 @@ export default function App() {
     }
 
     fetchFormResponses(); // * Fetch form responses on load
+    fetchGitHubFiles(); // Always try to fetch repos on mount
 
     // * Set up polling to refresh form responses every 10 seconds
     const interval = setInterval(fetchFormResponses, 10000);
@@ -256,26 +257,26 @@ export default function App() {
       )}
 
       {/* * GitHub Repositories Card */}
-      {githubData && (
-        <Card className="mt-6">
-          <CardContent>
-            <h2 className="font-semibold mb-2">GitHub Repositories:</h2>
-            <ul className="list-disc ml-5 max-h-48 overflow-auto">
-              {githubData.files?.length > 0 ? (
-                githubData.files.map((repo, idx) => (
-                  <li key={idx}>
-                    <a href={repo.html_url} target="_blank" rel="noreferrer">
-                      {repo.name}
-                    </a>
-                  </li>
-                ))
-              ) : (
-                <li>No repositories found</li>
-              )}
-            </ul>
-          </CardContent>
-        </Card>
-      )}
+      <Card className="mt-6">
+        <CardContent>
+          <h2 className="font-semibold mb-2">GitHub Repositories:</h2>
+          <ul className="list-disc ml-5 max-h-48 overflow-auto">
+            {githubData === null ? (
+              <li>Please log in to see Repositories</li>
+            ) : githubData.files?.length > 0 ? (
+              githubData.files.map((repo, idx) => (
+                <li key={idx}>
+                  <a href={repo.html_url} target="_blank" rel="noreferrer">
+                    {repo.name}
+                  </a>
+                </li>
+              ))
+            ) : (
+              <li>No repositories found</li>
+            )}
+          </ul>
+        </CardContent>
+      </Card>
 
       {/* * Google Integration Section */}
       <section className="mt-8 p-4 bg-white rounded shadow">
