@@ -255,8 +255,8 @@ export default function App() {
         </Card>
       )}
 
-      {/* * GitHub Repositories Card */}
-      <Card className="mt-6">
+{/* GitHub Section */}
+<Card className="mt-6">
   <CardContent>
     <h2 className="font-semibold mb-2">GitHub Repositories:</h2>
     <ul className="list-disc ml-5 max-h-48 overflow-auto">
@@ -277,32 +277,6 @@ export default function App() {
   </CardContent>
 </Card>
 
-{/* Google Integration Section */}
-<Card className="mt-6">
-  <CardContent>
-    <h2 className="font-semibold mb-2">Google Calendar:</h2>
-    {googleData === null ? (
-      <Card className="mt-6">
-  <CardContent>
-    <h2 className="font-semibold mb-2">GitHub Repositories:</h2>
-    <ul className="list-disc ml-5 max-h-48 overflow-auto">
-      {githubData === null ? (
-        <Button onClick={handleGitHubAuth}>Connect to GitHub</Button>
-      ) : githubData.files?.length > 0 ? (
-        githubData.files.map((repo, idx) => (
-          <li key={idx}>
-            <a href={repo.html_url} target="_blank" rel="noreferrer">
-              {repo.name}
-            </a>
-          </li>
-        ))
-      ) : (
-        <li>No repositories found</li>
-      )}
-    </ul>
-  </CardContent>
-</Card>
-)
 {/* Google Integration Section */}
 <Card className="mt-6">
   <CardContent>
