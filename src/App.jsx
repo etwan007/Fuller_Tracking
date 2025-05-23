@@ -302,7 +302,7 @@ export default function App() {
     </ul>
   </CardContent>
 </Card>
-
+)
 {/* Google Integration Section */}
 <Card className="mt-6">
   <CardContent>
