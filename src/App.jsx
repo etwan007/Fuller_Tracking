@@ -308,7 +308,7 @@ export default function App() {
   <CardContent>
     <h2 className="font-semibold mb-2">Google Calendar:</h2>
     {googleData === null ? (
-  <GoogleLogin />
+      <GoogleLogin />
     ) : calendarEvents?.length > 0 ? (
       <GoogleCalendarView events={calendarEvents} />
     ) : (
