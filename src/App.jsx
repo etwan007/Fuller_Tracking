@@ -257,39 +257,65 @@ export default function App() {
 
       {/* * GitHub Repositories Card */}
       <Card className="mt-6">
-        <CardContent>
-          <h2 className="font-semibold mb-2">GitHub Repositories:</h2>
-          <ul className="list-disc ml-5 max-h-48 overflow-auto">
-            {githubData === null ? (
-              <Button onClick={handleGitHubAuth}>Connect to GitHub</Button>
-            ) : githubData.files?.length > 0 ? (
-              githubData.files.map((repo, idx) => (
-                <li key={idx}>
-                  <a href={repo.html_url} target="_blank" rel="noreferrer">
-                    {repo.name}
-                  </a>
-                </li>
-              ))
-            ) : (
-              <li>No repositories found</li>
-            )}
-          </ul>
-        </CardContent>
-      </Card>
+  <CardContent>
+    <h2 className="font-semibold mb-2">GitHub Repositories:</h2>
+    <ul className="list-disc ml-5 max-h-48 overflow-auto">
+      {githubData === null ? (
+        <Button onClick={handleGitHubAuth}>Connect to GitHub</Button>
+      ) : githubData.files?.length > 0 ? (
+        githubData.files.map((repo, idx) => (
+          <li key={idx}>
+            <a href={repo.html_url} target="_blank" rel="noreferrer">
+              {repo.name}
+            </a>
+          </li>
+        ))
+      ) : (
+        <li>No repositories found</li>
+      )}
+    </ul>
+  </CardContent>
+</Card>
 
-      {/* * Google Integration Section */}
-      <section className="mt-8 p-4 bg-white rounded shadow">
-        <h2 className="text-lg font-bold mb-3">Google Integration</h2>
-        {/* * Google Login Button */}
-        <GoogleLogin />
+{/* Google Integration Section */}
+<Card className="mt-6">
+  <CardContent>
+    <h2 className="font-semibold mb-2">Google Calendar:</h2>
+    {googleData === null ? (
+      <Card className="mt-6">
+  <CardContent>
+    <h2 className="font-semibold mb-2">GitHub Repositories:</h2>
+    <ul className="list-disc ml-5 max-h-48 overflow-auto">
+      {githubData === null ? (
+        <Button onClick={handleGitHubAuth}>Connect to GitHub</Button>
+      ) : githubData.files?.length > 0 ? (
+        githubData.files.map((repo, idx) => (
+          <li key={idx}>
+            <a href={repo.html_url} target="_blank" rel="noreferrer">
+              {repo.name}
+            </a>
+          </li>
+        ))
+      ) : (
+        <li>No repositories found</li>
+      )}
+    </ul>
+  </CardContent>
+</Card>
 
-        {/* * Calendar Events Display */}
-        {calendarEvents && calendarEvents.length > 0 && (
-          <div className="mt-6">
-            <GoogleCalendarView events={calendarEvents} />
-          </div>
-        )}
-
+{/* Google Integration Section */}
+<Card className="mt-6">
+  <CardContent>
+    <h2 className="font-semibold mb-2">Google Calendar:</h2>
+    {googleData === null ? (
+  <GoogleLogin />
+    ) : calendarEvents?.length > 0 ? (
+      <GoogleCalendarView events={calendarEvents} />
+    ) : (
+      <p>No calendar events found</p>
+    )}
+  </CardContent>
+</Card>
         {/* * Google Form Submissions Table */}
         <section className="mt-4">
           <h2 className="text-lg font-bold mb-2">Form Submissions</h2>
