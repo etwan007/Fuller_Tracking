@@ -1,12 +1,15 @@
-export default async function githubFilesHandler(req, res) {
-  const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+import cookie from 'cookie';
 
-  const githubToken = req.cookies.github_token;
+export default async function githubFilesHandler(req, res) {
+  // Parse cookies from the request header
+  const cookies = cookie.parse(req.headers.cookie || '');
+  const githubToken = cookies.github_token;
   if (!githubToken) {
     res.status(401).json({ error: 'Unauthorized: No GitHub token' });
     return;
   }
 
+  const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
   const response = await fetch('https://api.github.com/user/repos', {
     headers: { Authorization: `token ${githubToken}` },
   });
