@@ -26,7 +26,7 @@ export default function App() {
     setLoading(true); // * Set loading state
     setSelectedBullet(''); // * Clear selected bullet
     setClarification(''); // * Clear previous clarifications
-    const prompt = `Give me some direction on what to do with this project idea. Give me 5 ideas, each with 2 sentences. Each Idea should have one bullet point, starting with a Unique Project name relating to the contents for each idea. Seperate each idea with a new line.: ${projectName}`; // * Prompt for AI
+    const prompt = `Give me 5 unique and creative project ideas based on this concept. Each idea should be presented as a single bullet point and must begin with a unique, descriptive project name that relates to the concept. Each bullet should contain exactly two sentences describing the idea. The ideas should focus on what can be built using hobby-grade tools and components, unless otherwise specified. Do not split ideas into multiple bullets. Separate each idea with a line break.: ${projectName}`; // * Prompt for AI
 
     // * Call backend API to get AI suggestion
     const res = await fetch('/api/ai', {
@@ -45,7 +45,7 @@ export default function App() {
     if (!clarification.trim()) return; // ? Guard: Don't run if clarification is empty
     setLoading(true); // * Set loading state
     setSelectedBullet(''); // * Clear selected bullet
-    const prompt = `Given the previous project idea: "${projectName}", and the previous breakdown: "${currentBreakdown}", here is a clarification or modification: "${clarification}". Please provide an updated breakdown as bullet points. Follow the same guidlines as the initial prompt.`; // * Prompt for AI clarification
+    const prompt = `Given the original project idea: ${projectName}, and the previous breakdown: ${currentBreakdown}, here is a new clarification or modification: ${clarification}. Based on this updated input, generate 5 revised or entirely new project ideas. Each idea must be presented as a single bullet point starting with a unique, relevant project name. Each bullet should contain exactly two sentences describing the idea. The ideas should focus on what can be built using hobby-grade tools (inclduing 3D printing, CNC router, soldering iron, welding, etc.) and components, unless otherwise specified. Do not reuse the original ideas with minor wording changes. Separate each idea with a line break.`; // * Prompt for AI clarification
 
     // * Call backend API to get clarified/modified suggestion
     const res = await fetch('/api/ai', {
@@ -63,6 +63,8 @@ export default function App() {
   async function handleSelectBullet(bullet) {
     // Extract the project name (assume it's the first word or phrase before a colon or dash)
     let name = bullet.split(':')[0].split('-')[0].trim();
+    // Remove special characters except spaces, dashes, and underscores
+    name = name.replace(/[^a-zA-Z0-9 _-]/g, '');
     if (!name) name = bullet.trim();
     setProjectName(name); // * Update project name
 
@@ -194,7 +196,6 @@ export default function App() {
       <div className="flex gap-2 flex-wrap">
         <Button onClick={handleAISuggestion}>Generate AI Breakdown</Button>
         <Button onClick={handleGitHubAuth}>Connect to GitHub</Button>
-        <Button onClick={fetchGitHubFiles}>Fetch GitHub Repos</Button>
         <Button onClick={createGitHubRepo}>Create GitHub Repo</Button>
       </div>
 
@@ -281,10 +282,6 @@ export default function App() {
         <h2 className="text-lg font-bold mb-3">Google Integration</h2>
         {/* * Google Login Button */}
         <GoogleLogin />
-        <div className="flex gap-2 mt-3">
-          <Button onClick={fetchCalendar}>Fetch Calendar Events</Button>
-          <Button onClick={fetchFormResponses}>Fetch Form Responses</Button>
-        </div>
 
         {/* * Calendar Events Display */}
         {calendarEvents && calendarEvents.length > 0 && (
