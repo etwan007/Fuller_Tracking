@@ -1,9 +1,10 @@
 import cookie from 'cookie';
 
 export default async function githubFilesHandler(req, res) {
-  // Parse cookies from the request header
-  const cookies = cookie.parse(req.headers.cookie || '');
+  // Safely parse cookies from the request header
+  const cookies = cookie.parse(req.headers?.cookie || '');
   const githubToken = cookies.github_token;
+
   if (!githubToken) {
     res.status(401).json({ error: 'Unauthorized: No GitHub token' });
     return;
