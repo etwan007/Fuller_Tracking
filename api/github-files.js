@@ -2,6 +2,8 @@ import cookie from 'cookie';
 
 export default async function githubFilesHandler(req, res) {
   try {
+    console.log('Request headers:', req.headers);
+
     const cookies = cookie.parse(req.headers?.cookie || '');
     const githubToken = cookies.github_token;
 
@@ -25,6 +27,7 @@ export default async function githubFilesHandler(req, res) {
     const data = await response.json();
     res.status(200).json({ files: data });
   } catch (error) {
+    console.error('Error in githubFilesHandler:', error);
     res.status(500).json({ error: `Server error: ${error.message}` });
   }
 }
