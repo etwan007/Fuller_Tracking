@@ -196,7 +196,6 @@ export default function App() {
       {/* * Action Buttons */}
       <div className="flex gap-2 flex-wrap">
         <Button onClick={handleAISuggestion}>Generate AI Breakdown</Button>
-        <Button onClick={handleGitHubAuth}>Connect to GitHub</Button>
         <Button onClick={createGitHubRepo}>Create GitHub Repo</Button>
       </div>
 
@@ -262,7 +261,7 @@ export default function App() {
           <h2 className="font-semibold mb-2">GitHub Repositories:</h2>
           <ul className="list-disc ml-5 max-h-48 overflow-auto">
             {githubData === null ? (
-              <li>Please log in to see Repositories</li>
+              <Button onClick={handleGitHubAuth}>Connect to GitHub</Button>
             ) : githubData.files?.length > 0 ? (
               githubData.files.map((repo, idx) => (
                 <li key={idx}>
