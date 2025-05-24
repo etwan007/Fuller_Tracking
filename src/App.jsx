@@ -7,6 +7,7 @@ import { GoogleCalendarView } from './components/GoogleCalendarView'; // * Calen
 import GitHubRepoList from './components/GitHubRepoList'; // * GitHub repository list component
 import FormSubmissionsTable from './components/FormSubmissionsTable'; // * Google Form submissions table component
 import AILoader from './components/AILoader'; // * AI loading indicator component
+import AddEventModal from './components/AddEventModal'; // * Modal for adding calendar events
 
 // ! Main App component
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
   const [currentBreakdown, setCurrentBreakdown] = useState(''); // * Stores the AI's clarified/modified response
   const [selectedBullet, setSelectedBullet] = useState(''); // * Stores the bullet selected by the user
   const [loading, setLoading] = useState(false); // * Indicator for AI loading
+  const [showAddEvent, setShowAddEvent] = useState(false); // * Controls Add Event modal visibility
 
   // * Handles AI suggestion generation using the project name
   const handleAISuggestion = useCallback(async () => {
@@ -282,7 +284,15 @@ export default function App() {
           {!calendarEvents ? (
             <GoogleLogin />
           ) : calendarEvents.length > 0 ? (
-            <GoogleCalendarView events={calendarEvents} />
+            <>
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="font-medium">Upcoming Events</h3>
+                <Button onClick={() => setShowAddEvent(true)}>
+                  Add Event
+                </Button>
+              </div>
+              <GoogleCalendarView events={calendarEvents} />
+            </>
           ) : (
             <p>No calendar events found</p>
           )}
@@ -291,6 +301,13 @@ export default function App() {
 
       {/* Google Form Submissions Table */}
       <FormSubmissionsTable formResponses={formResponses} />
+
+      {/* Add Event Modal */}
+      <AddEventModal
+        open={showAddEvent}
+        onClose={() => setShowAddEvent(false)}
+        onEventAdded={fetchCalendar} // Refresh events after adding
+      />
     </main>
   );
 }
