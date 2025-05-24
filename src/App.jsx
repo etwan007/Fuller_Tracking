@@ -195,6 +195,8 @@ export default function App() {
     return () => clearInterval(interval); // * Cleanup on unmount
   }, [fetchCalendar, fetchFormResponses, fetchGitHubFiles]);
 
+  const breakdownToShow = currentBreakdown || aiSuggestion;
+
   // --- Render ---
   return (
     <main className="p-4 max-w-xl mx-auto bg-gray-50 min-h-screen">
