@@ -1,9 +1,12 @@
 // ! Import React hooks and custom components
-import { useState, useEffect } from 'react'; // * React hooks for state management and side effects
+import { useState, useEffect, useCallback } from 'react'; // * React hooks for state management and side effects
 import { Button } from './components/Button'; // * Custom Button component
 import { Card, CardContent } from './components/Card'; // * Custom Card components for UI
 import { GoogleLogin } from './components/GoogleLogin'; // * Google OAuth login button
 import { GoogleCalendarView } from './components/GoogleCalendarView'; // * Calendar display component
+import GitHubRepoList from './components/GitHubRepoList'; // * GitHub repository list component
+import FormSubmissionsTable from './components/FormSubmissionsTable'; // * Google Form submissions table component
+import AILoader from './components/AILoader'; // * AI loading indicator component
 
 // ! Main App component
 export default function App() {
@@ -22,7 +25,7 @@ export default function App() {
   const [loading, setLoading] = useState(false); // * Indicator for AI loading
 
   // * Handles AI suggestion generation using the project name
-  async function handleAISuggestion() {
+  const handleAISuggestion = useCallback(async () => {
     if (!projectName.trim()) return; // ? Guard: Don't run if input is empty
     setLoading(true); // * Set loading state
     setSelectedBullet(''); // * Clear selected bullet
@@ -39,10 +42,10 @@ export default function App() {
     setAiSuggestion(data.response); // * Update state with AI's response
     setCurrentBreakdown(data.response); // * Update current breakdown
     setLoading(false); // * Clear loading state
-  }
+  }, [projectName]);
 
   // * Handles clarification/modification requests
-  async function handleClarification() {
+  const handleClarification = useCallback(async () => {
     if (!clarification.trim()) return; // ? Guard: Don't run if clarification is empty
     setLoading(true); // * Set loading state
     setSelectedBullet(''); // * Clear selected bullet
@@ -58,10 +61,10 @@ export default function App() {
     setCurrentBreakdown(data.response); // * Update state with clarified/modified response
     setClarification(''); // * Clear clarification input
     setLoading(false); // * Clear loading state
-  }
+  }, [clarification, projectName, currentBreakdown]);
 
   // * Handles selecting a bullet and creating a repo with its project name
-  async function handleSelectBullet(bullet) {
+  const handleSelectBullet = useCallback(async (bullet) => {
     // Extract the project name (assume it's the first word or phrase before a colon or dash)
     let name = bullet.split(':')[0].split('-')[0].trim();
     // Remove special characters except spaces, dashes, and underscores
@@ -82,19 +85,19 @@ export default function App() {
     } else {
       alert('Failed to create repo: ' + (data.error || 'Unknown error'));
     }
-  }
+  }, []);
 
   // * Initiates GitHub OAuth login flow
-  async function handleGitHubAuth() {
+  const handleGitHubAuth = useCallback(async () => {
     const res = await fetch('/api/github-login');
     const data = await res.json();
     if (data.url) {
       window.location.href = data.url; // * Redirect user to GitHub login
     }
-  }
+  }, []);
 
   // * Fetches the user's GitHub repositories from backend
-  async function fetchGitHubFiles() {
+  const fetchGitHubFiles = useCallback(async () => {
     try {
       const res = await fetch('/api/github-files');
       if (!res.ok) {
@@ -114,10 +117,10 @@ export default function App() {
       setGithubData(null);
       setGithubError('A network error occurred');
     }
-  }
+  }, []);
 
   // * Creates a new GitHub repository with the given project name
-  async function createGitHubRepo() {
+  const createGitHubRepo = useCallback(async () => {
     if (!projectName.trim()) return alert('Enter a project name first.');
     const res = await fetch('/api/github-create-repo', {
       method: 'POST',
@@ -131,10 +134,10 @@ export default function App() {
     } else {
       alert('Failed to create repo: ' + (data.error || 'Unknown error'));
     }
-  }
+  }, [projectName, fetchGitHubFiles]);
 
   // * Fetches Google Calendar events using the stored access token
-  async function fetchCalendar() {
+  const fetchCalendar = useCallback(async () => {
     const accessToken = localStorage.getItem('google_access_token');
     if (!accessToken) return alert('No access token available.');
 
@@ -150,10 +153,10 @@ export default function App() {
     } else {
       alert('Failed to fetch calendar events');
     }
-  }
+  }, []);
 
   // * Fetches Google Form responses from backend
-  async function fetchFormResponses() {
+  const fetchFormResponses = useCallback(async () => {
     const res = await fetch('/api/google-form-responses');
     if (res.ok) {
       const data = await res.json();
@@ -161,9 +164,9 @@ export default function App() {
     } else {
       alert('Failed to fetch form responses');
     }
-  }
+  }, []);
 
-  // ! useEffect: Runs once on component mount
+  // --- Effects ---
   useEffect(() => {
     // * Check if redirected from Google with an access_token in the URL
     const url = new URL(window.location.href);
@@ -190,12 +193,9 @@ export default function App() {
     // * Set up polling to refresh form responses every 10 seconds
     const interval = setInterval(fetchFormResponses, 10000);
     return () => clearInterval(interval); // * Cleanup on unmount
-  }, []);
+  }, [fetchCalendar, fetchFormResponses, fetchGitHubFiles]);
 
-  // * Helper: Use currentBreakdown if available, else aiSuggestion
-  const breakdownToShow = currentBreakdown || aiSuggestion;
-
-  // ! Render the UI
+  // --- Render ---
   return (
     <main className="p-4 max-w-xl mx-auto bg-gray-50 min-h-screen">
       {/* * App Title */}
@@ -221,13 +221,7 @@ export default function App() {
         <Card className="mt-6">
           <CardContent>
             <h2 className="font-semibold mb-2">AI Breakdown</h2>
-            {/* * Loading indicator */}
-            {loading && (
-              <div className="mb-2 text-blue-600 flex items-center gap-2">
-                <span className="animate-spin inline-block w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full"></span>
-                Generating AI response...
-              </div>
-            )}
+            <AILoader loading={loading} />
             <ul className="list-disc ml-5">
               {breakdownToShow
                 .split('\n')
@@ -273,33 +267,13 @@ export default function App() {
       )}
 
       {/* GitHub Section */}
-      <Card className="mt-6">
-        <CardContent>
-          <h2 className="font-semibold mb-2">GitHub Repositories:</h2>
-          <ul className="list-disc ml-5 max-h-48 overflow-auto">
-            {githubError ? (
-              <li>{githubError}</li>
-            ) : githubData?.files?.length > 0 ? (
-              githubData.files.map((repo, idx) => (
-                <li key={idx}>
-                  <a href={repo.html_url} target="_blank" rel="noreferrer">
-                    {repo.name}
-                  </a>
-                </li>
-              ))
-            ) : (
-              <li>No repositories found</li>
-            )}
-          </ul>
-          {!githubData && (
-            <Button className="mt-2" onClick={handleGitHubAuth}>
-              Connect to GitHub
-            </Button>
-          )}
-        </CardContent>
-      </Card>
+      <GitHubRepoList
+        githubData={githubData}
+        githubError={githubError}
+        onLogin={handleGitHubAuth}
+      />
 
-      {/* Google Integration Section */}
+      {/* Google Calendar Section */}
       <Card className="mt-6">
         <CardContent>
           <h2 className="font-semibold mb-2">Google Calendar:</h2>
@@ -314,33 +288,7 @@ export default function App() {
       </Card>
 
       {/* Google Form Submissions Table */}
-      <section className="mt-4">
-        <h2 className="text-lg font-bold mb-2">Form Submissions</h2>
-        <table className="w-full border text-sm">
-          <thead>
-            <tr>
-              {(formResponses?.[0] || ['Time Submitted', 'Project Name', 'Description', 'Due Date']).map((header, i) => (
-                <th key={i} className="border p-1">{header}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {formResponses?.slice(1).length > 0 ? (
-              formResponses.slice(1).map((row, i) => (
-                <tr key={i}>
-                  {row.map((cell, j) => (
-                    <td key={j} className="border p-1">{cell}</td>
-                  ))}
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={3} className="text-center p-2">No submissions yet.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </section>
+      <FormSubmissionsTable formResponses={formResponses} />
     </main>
   );
 }
