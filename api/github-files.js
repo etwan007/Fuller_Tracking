@@ -2,14 +2,12 @@ import cookie from 'cookie';
 
 export default async function githubFilesHandler(req, res) {
   try {
-    console.log('Request headers:', req.headers);
-
+    // Parse cookies from the request header
     const cookies = cookie.parse(req.headers?.cookie || '');
     const githubToken = cookies.github_token;
 
     if (!githubToken) {
-      res.status(401).json({ error: 'Unauthorized: No GitHub token' });
-      return;
+      return res.status(401).json({ error: 'Unauthorized: No GitHub token' });
     }
 
     const fetch = (...args) =>
@@ -20,14 +18,14 @@ export default async function githubFilesHandler(req, res) {
     });
 
     if (!response.ok) {
-      res.status(response.status).json({ error: 'Failed to fetch repos' });
-      return;
+      const errorText = await response.text();
+      return res.status(response.status).json({ error: 'Failed to fetch repos', details: errorText });
     }
 
     const data = await response.json();
-    res.status(200).json({ files: data });
+    return res.status(200).json({ files: data });
   } catch (error) {
     console.error('Error in githubFilesHandler:', error);
-    res.status(500).json({ error: `Server error: ${error.message}` });
+    return res.status(500).json({ error: `Server error: ${error.message}` });
   }
 }

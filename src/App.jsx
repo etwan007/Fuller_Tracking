@@ -11,6 +11,7 @@ export default function App() {
   const [projectName, setProjectName] = useState(''); // * Stores the project name input by the user
   const [aiSuggestion, setAiSuggestion] = useState(''); // * Stores the AI's suggestion/response
   const [githubData, setGithubData] = useState(null); // * Stores GitHub repo data
+  const [githubError, setGithubError] = useState(null);
   const [calendarEvents, setCalendarEvents] = useState(null); // * Stores Google Calendar events
   const [formResponses, setFormResponses] = useState(null); // * Stores Google Form responses
 
@@ -94,9 +95,25 @@ export default function App() {
 
   // * Fetches the user's GitHub repositories from backend
   async function fetchGitHubFiles() {
-    const res = await fetch('/api/github-files');
-    const data = await res.json();
-    setGithubData(data); // * Update state with repo data
+    try {
+      const res = await fetch('/api/github-files');
+      if (!res.ok) {
+        if (res.status === 401) {
+          setGithubData(null);
+          setGithubError('Please log in to see Repositories');
+        } else {
+          setGithubData(null);
+          setGithubError('Failed to fetch repositories');
+        }
+        return;
+      }
+      const data = await res.json();
+      setGithubData(data);
+      setGithubError(null);
+    } catch (err) {
+      setGithubData(null);
+      setGithubError('A network error occurred');
+    }
   }
 
   // * Creates a new GitHub repository with the given project name
@@ -255,41 +272,46 @@ export default function App() {
         </Card>
       )}
 
-{/* GitHub Section */}
-<Card className="mt-6">
-  <CardContent>
-    <h2 className="font-semibold mb-2">GitHub Repositories:</h2>
-    <ul className="list-disc ml-5 max-h-48 overflow-auto">
-      {githubData === null ? (
-        <Button onClick={handleGitHubAuth}>Connect to GitHub</Button>
-      ) : githubData.files?.length > 0 ? (
-        githubData.files.map((repo, idx) => (
-          <li key={idx}>
-            <a href={repo.html_url} target="_blank" rel="noreferrer">
-              {repo.name}
-            </a>
-          </li>
-        ))
-      ) : (
-        <li>No repositories found</li>
-      )}
-    </ul>
-  </CardContent>
-</Card>
+      {/* GitHub Section */}
+      <Card className="mt-6">
+        <CardContent>
+          <h2 className="font-semibold mb-2">GitHub Repositories:</h2>
+          <ul className="list-disc ml-5 max-h-48 overflow-auto">
+            {githubError ? (
+              <li>{githubError}</li>
+            ) : githubData?.files?.length > 0 ? (
+              githubData.files.map((repo, idx) => (
+                <li key={idx}>
+                  <a href={repo.html_url} target="_blank" rel="noreferrer">
+                    {repo.name}
+                  </a>
+                </li>
+              ))
+            ) : (
+              <li>No repositories found</li>
+            )}
+          </ul>
+          {!githubData && (
+            <Button className="mt-2" onClick={handleGitHubAuth}>
+              Connect to GitHub
+            </Button>
+          )}
+        </CardContent>
+      </Card>
 
-{/* Google Integration Section */}
-<Card className="mt-6">
-  <CardContent>
-    <h2 className="font-semibold mb-2">Google Calendar:</h2>
-    {googleData === null ? (
-      <GoogleLogin />
-    ) : calendarEvents?.length > 0 ? (
-      <GoogleCalendarView events={calendarEvents} />
-    ) : (
-      <p>No calendar events found</p>
-    )}
-  </CardContent>
-</Card>
+      {/* Google Integration Section */}
+      <Card className="mt-6">
+        <CardContent>
+          <h2 className="font-semibold mb-2">Google Calendar:</h2>
+          {googleData === null ? (
+            <GoogleLogin />
+          ) : calendarEvents?.length > 0 ? (
+            <GoogleCalendarView events={calendarEvents} />
+          ) : (
+            <p>No calendar events found</p>
+          )}
+        </CardContent>
+      </Card>
         {/* * Google Form Submissions Table */}
         <section className="mt-4">
           <h2 className="text-lg font-bold mb-2">Form Submissions</h2>
