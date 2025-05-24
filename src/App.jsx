@@ -342,7 +342,6 @@ export default function App() {
             </tbody>
           </table>
         </section>
-      </section>
-    </main>
+      </main>
   );
 }
