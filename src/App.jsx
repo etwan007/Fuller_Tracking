@@ -1,28 +1,28 @@
 // ! Import React hooks and custom components
-import { useState, useEffect, useCallback } from 'react'; // * React hooks for state management and side effects
-import { Button } from './components/Button'; // * Custom Button component
-import { Card, CardContent } from './components/Card'; // * Custom Card components for UI
-import { GoogleLogin } from './components/GoogleLogin'; // * Google OAuth login button
-import { GoogleCalendarView } from './components/GoogleCalendarView'; // * Calendar display component
-import GitHubRepoList from './components/GitHubRepoList'; // * GitHub repository list component
-import FormSubmissionsTable from './components/FormSubmissionsTable'; // * Google Form submissions table component
-import AILoader from './components/AILoader'; // * AI loading indicator component
-import AddEventModal from './components/AddEventModal'; // * Modal for adding calendar events
+import { useState, useEffect, useCallback } from "react"; // * React hooks for state management and side effects
+import { Button } from "./components/Button"; // * Custom Button component
+import { Card, CardContent } from "./components/Card"; // * Custom Card components for UI
+import { GoogleLogin } from "./components/GoogleLogin"; // * Google OAuth login button
+import { GoogleCalendarView } from "./components/GoogleCalendarView"; // * Calendar display component
+import GitHubRepoList from "./components/GitHubRepoList"; // * GitHub repository list component
+import FormSubmissionsTable from "./components/FormSubmissionsTable"; // * Google Form submissions table component
+import AILoader from "./components/AILoader"; // * AI loading indicator component
+import AddEventModal from "./components/AddEventModal"; // * Modal for adding calendar events
 
 // ! Main App component
 export default function App() {
   // * State variables for managing UI and data
-  const [projectName, setProjectName] = useState(''); // * Stores the project name input by the user
-  const [aiSuggestion, setAiSuggestion] = useState(''); // * Stores the AI's suggestion/response
+  const [projectName, setProjectName] = useState(""); // * Stores the project name input by the user
+  const [aiSuggestion, setAiSuggestion] = useState(""); // * Stores the AI's suggestion/response
   const [githubData, setGithubData] = useState(null); // * Stores GitHub repo data
   const [githubError, setGithubError] = useState(null);
   const [calendarEvents, setCalendarEvents] = useState(null); // * Stores Google Calendar events
   const [formResponses, setFormResponses] = useState(null); // * Stores Google Form responses
 
   // * State for clarification/modification and bullet selection
-  const [clarification, setClarification] = useState(''); // * Stores user clarification or modification input
-  const [currentBreakdown, setCurrentBreakdown] = useState(''); // * Stores the AI's clarified/modified response
-  const [selectedBullet, setSelectedBullet] = useState(''); // * Stores the bullet selected by the user
+  const [clarification, setClarification] = useState(""); // * Stores user clarification or modification input
+  const [currentBreakdown, setCurrentBreakdown] = useState(""); // * Stores the AI's clarified/modified response
+  const [selectedBullet, setSelectedBullet] = useState(""); // * Stores the bullet selected by the user
   const [loading, setLoading] = useState(false); // * Indicator for AI loading
   const [showAddEvent, setShowAddEvent] = useState(false); // * Controls Add Event modal visibility
 
@@ -30,14 +30,14 @@ export default function App() {
   const handleAISuggestion = useCallback(async () => {
     if (!projectName.trim()) return; // ? Guard: Don't run if input is empty
     setLoading(true); // * Set loading state
-    setSelectedBullet(''); // * Clear selected bullet
-    setClarification(''); // * Clear previous clarifications
+    setSelectedBullet(""); // * Clear selected bullet
+    setClarification(""); // * Clear previous clarifications
     const prompt = `Give me 5 unique and creative project ideas based on this concept. Each idea should be presented as a single bullet point and must begin with a unique, descriptive project name that relates to the concept. Each bullet should contain exactly two sentences describing the idea. The ideas should focus on what can be built using hobby-grade tools and components, unless otherwise specified. Do not split ideas into multiple bullets. Separate each idea with a line break.: ${projectName}`; // * Prompt for AI
 
     // * Call backend API to get AI suggestion
-    const res = await fetch('/api/ai', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("/api/ai", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt }),
     });
     const data = await res.json();
@@ -50,34 +50,34 @@ export default function App() {
   const handleClarification = useCallback(async () => {
     if (!clarification.trim()) return; // ? Guard: Don't run if clarification is empty
     setLoading(true); // * Set loading state
-    setSelectedBullet(''); // * Clear selected bullet
+    setSelectedBullet(""); // * Clear selected bullet
     const prompt = `Given the original project idea: ${projectName}, and the previous breakdown: ${currentBreakdown}, here is a new clarification or modification: ${clarification}. Based on this updated input, generate 5 revised or entirely new project ideas. Each idea must be presented as a single bullet point starting with a unique, relevant project name. Each bullet should contain exactly two sentences describing the idea. The ideas should focus on what can be built using hobby-grade tools (inclduing 3D printing, CNC router, soldering iron, welding, etc.) and components, unless otherwise specified. Do not reuse the original ideas with minor wording changes. Separate each idea with a line break.`; // * Prompt for AI clarification
 
     // * Call backend API to get clarified/modified suggestion
-    const res = await fetch('/api/ai', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("/api/ai", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt }),
     });
     const data = await res.json();
     setCurrentBreakdown(data.response); // * Update state with clarified/modified response
-    setClarification(''); // * Clear clarification input
+    setClarification(""); // * Clear clarification input
     setLoading(false); // * Clear loading state
   }, [clarification, projectName, currentBreakdown]);
 
   // * Handles selecting a bullet and creating a repo with its project name
   const handleSelectBullet = useCallback(async (bullet) => {
     // Extract the project name (assume it's the first word or phrase before a colon or dash)
-    let name = bullet.split(':')[0].split('-')[0].trim();
+    let name = bullet.split(":")[0].split("-")[0].trim();
     // Remove special characters except spaces, dashes, and underscores
-    name = name.replace(/[^a-zA-Z0-9 _-]/g, '');
+    name = name.replace(/[^a-zA-Z0-9 _-]/g, "");
     if (!name) name = bullet.trim();
     setProjectName(name); // * Update project name
 
     // Create the repo
-    const res = await fetch('/api/github-create-repo', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("/api/github-create-repo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name }),
     });
     const data = await res.json();
@@ -85,13 +85,13 @@ export default function App() {
       alert(`GitHub repository "${name}" created!`);
       fetchGitHubFiles(); // * Refresh repo list
     } else {
-      alert('Failed to create repo: ' + (data.error || 'Unknown error'));
+      alert("Failed to create repo: " + (data.error || "Unknown error"));
     }
   }, []);
 
   // * Initiates GitHub OAuth login flow
   const handleGitHubAuth = useCallback(async () => {
-    const res = await fetch('/api/github-login');
+    const res = await fetch("/api/github-login");
     const data = await res.json();
     if (data.url) {
       window.location.href = data.url; // * Redirect user to GitHub login
@@ -101,14 +101,14 @@ export default function App() {
   // * Fetches the user's GitHub repositories from backend
   const fetchGitHubFiles = useCallback(async () => {
     try {
-      const res = await fetch('/api/github-files');
+      const res = await fetch("/api/github-files");
       if (!res.ok) {
         if (res.status === 401) {
           setGithubData(null);
-          setGithubError('Please log in to see Repositories');
+          setGithubError("Please log in to see Repositories");
         } else {
           setGithubData(null);
-          setGithubError('Failed to fetch repositories');
+          setGithubError("Failed to fetch repositories");
         }
         return;
       }
@@ -117,54 +117,54 @@ export default function App() {
       setGithubError(null);
     } catch (err) {
       setGithubData(null);
-      setGithubError('A network error occurred');
+      setGithubError("A network error occurred");
     }
   }, []);
 
   // * Creates a new GitHub repository with the given project name
   const createGitHubRepo = useCallback(async () => {
-    if (!projectName.trim()) return alert('Enter a project name first.');
-    const res = await fetch('/api/github-create-repo', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    if (!projectName.trim()) return alert("Enter a project name first.");
+    const res = await fetch("/api/github-create-repo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: projectName }),
     });
     const data = await res.json();
     if (data.success) {
-      alert('GitHub repository created!');
+      alert("GitHub repository created!");
       fetchGitHubFiles(); // * Refresh repo list
     } else {
-      alert('Failed to create repo: ' + (data.error || 'Unknown error'));
+      alert("Failed to create repo: " + (data.error || "Unknown error"));
     }
   }, [projectName, fetchGitHubFiles]);
 
   // * Fetches Google Calendar events using the stored access token
   const fetchCalendar = useCallback(async () => {
-    const accessToken = localStorage.getItem('google_access_token');
-    if (!accessToken) return alert('No access token available.');
+    const accessToken = localStorage.getItem("google_access_token");
+    if (!accessToken) return alert("No access token available.");
 
-    const res = await fetch('/api/google-calendar', {
+    const res = await fetch("/api/google-calendar", {
       headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
 
     if (res.ok) {
       const data = await res.json();
       setCalendarEvents(data.items || []); // * Update state with calendar events
     } else {
-      alert('Failed to fetch calendar events');
+      alert("Failed to fetch calendar events");
     }
   }, []);
 
   // * Fetches Google Form responses from backend
   const fetchFormResponses = useCallback(async () => {
-    const res = await fetch('/api/google-form-responses');
+    const res = await fetch("/api/google-form-responses");
     if (res.ok) {
       const data = await res.json();
       setFormResponses(data.values); // * Update state with form responses
     } else {
-      alert('Failed to fetch form responses');
+      alert("Failed to fetch form responses");
     }
   }, []);
 
@@ -172,20 +172,24 @@ export default function App() {
   useEffect(() => {
     // * Check if redirected from Google with an access_token in the URL
     const url = new URL(window.location.href);
-    const token = url.searchParams.get('access_token');
+    const token = url.searchParams.get("access_token");
 
     if (token) {
-      localStorage.setItem('google_access_token', token); // * Save token for later use
+      localStorage.setItem("google_access_token", token); // * Save token for later use
       setTimeout(() => {
         // * Remove token from URL for cleanliness
-        window.history.replaceState({}, document.title, window.location.pathname);
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
       }, 100);
 
       // * Fetch calendar events after login
       fetchCalendar();
     } else {
       // * If already logged in, fetch calendar events
-      const existingToken = localStorage.getItem('google_access_token');
+      const existingToken = localStorage.getItem("google_access_token");
       if (existingToken) fetchCalendar();
     }
 
@@ -205,10 +209,42 @@ export default function App() {
       {/* * App Title */}
       <h1 className="text-3xl font-bold mb-6">Fuller Tracking</h1>
 
+      {/* Google Form Submissions Table */}
+      <FormSubmissionsTable formResponses={formResponses} />
+      <ul className="list-disc ml-5">
+              {breakdownToShow
+                .split("\n")
+                .filter((line) => line.trim() !== "")
+                .map((line, idx) => (
+                  <li
+                    key={idx}
+                    className={`cursor-pointer hover:bg-blue-100 rounded px-1 ${
+                      selectedBullet === line ? "bg-blue-200 font-bold" : ""
+                    }`}
+                    onClick={() => setSelectedBullet(line)}
+                    title="Click to select this bullet"
+                  >
+                    {line.replace(/^[\-\*\d\.\s]+/, "")}
+                  </li>
+                ))}
+            </ul>
+            {/* * Show "Create Repo" button if a bullet is selected */}
+            {selectedBullet && (
+              <div className="mt-3 flex items-center gap-2">
+                <span className="text-sm font-semibold">Selected:</span>
+                <span className="italic">
+                  {selectedBullet.replace(/^[\-\*\d\.\s]+/, "")}
+                </span>
+                <Button onClick={() => handleSelectBullet(selectedBullet)}>
+                  Make Repo from This
+                </Button>
+              </div>
+            )}
+
       {/* * Project Name Input */}
       <input
         type="text"
-        placeholder="Enter project name"
+        placeholder="Enter Project Idea"
         className="w-full p-3 border rounded mb-4"
         value={projectName}
         onChange={(e) => setProjectName(e.target.value)}
@@ -217,7 +253,6 @@ export default function App() {
       {/* * Action Buttons */}
       <div className="flex gap-2 flex-wrap">
         <Button onClick={handleAISuggestion}>Generate AI Breakdown</Button>
-        <Button onClick={createGitHubRepo}>Create GitHub Repo</Button>
       </div>
 
       {/* * AI Suggestion & Clarification Card */}
@@ -228,16 +263,18 @@ export default function App() {
             <AILoader loading={loading} />
             <ul className="list-disc ml-5">
               {breakdownToShow
-                .split('\n')
-                .filter(line => line.trim() !== '')
+                .split("\n")
+                .filter((line) => line.trim() !== "")
                 .map((line, idx) => (
                   <li
                     key={idx}
-                    className={`cursor-pointer hover:bg-blue-100 rounded px-1 ${selectedBullet === line ? 'bg-blue-200 font-bold' : ''}`}
+                    className={`cursor-pointer hover:bg-blue-100 rounded px-1 ${
+                      selectedBullet === line ? "bg-blue-200 font-bold" : ""
+                    }`}
                     onClick={() => setSelectedBullet(line)}
                     title="Click to select this bullet"
                   >
-                    {line.replace(/^[\-\*\d\.\s]+/, '')}
+                    {line.replace(/^[\-\*\d\.\s]+/, "")}
                   </li>
                 ))}
             </ul>
@@ -245,7 +282,9 @@ export default function App() {
             {selectedBullet && (
               <div className="mt-3 flex items-center gap-2">
                 <span className="text-sm font-semibold">Selected:</span>
-                <span className="italic">{selectedBullet.replace(/^[\-\*\d\.\s]+/, '')}</span>
+                <span className="italic">
+                  {selectedBullet.replace(/^[\-\*\d\.\s]+/, "")}
+                </span>
                 <Button onClick={() => handleSelectBullet(selectedBullet)}>
                   Make Repo from This
                 </Button>
@@ -253,16 +292,21 @@ export default function App() {
             )}
             {/* * Clarification/Modification Box */}
             <div className="mt-6">
-              <h2 className="font-semibold mb-2">Clarify or Modify Breakdown</h2>
+              <h2 className="font-semibold mb-2">
+                Clarify or Modify Breakdown
+              </h2>
               <textarea
                 className="w-full p-2 border rounded mb-2"
                 placeholder="Add clarifications or modifications to your project idea..."
                 value={clarification}
-                onChange={e => setClarification(e.target.value)}
+                onChange={(e) => setClarification(e.target.value)}
                 rows={3}
                 disabled={loading}
               />
-              <Button onClick={handleClarification} disabled={loading || !clarification.trim()}>
+              <Button
+                onClick={handleClarification}
+                disabled={loading || !clarification.trim()}
+              >
                 Submit Clarification
               </Button>
             </div>
@@ -287,9 +331,7 @@ export default function App() {
             <>
               <div className="flex justify-between items-center mb-2">
                 <h3 className="font-medium">Upcoming Events</h3>
-                <Button onClick={() => setShowAddEvent(true)}>
-                  Add Event
-                </Button>
+                <Button onClick={() => setShowAddEvent(true)}>Add Event</Button>
               </div>
               <GoogleCalendarView events={calendarEvents} />
             </>
@@ -298,9 +340,6 @@ export default function App() {
           )}
         </CardContent>
       </Card>
-
-      {/* Google Form Submissions Table */}
-      <FormSubmissionsTable formResponses={formResponses} />
 
       {/* Add Event Modal */}
       <AddEventModal
