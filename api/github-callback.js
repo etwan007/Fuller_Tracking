@@ -2,7 +2,7 @@ import { serialize } from 'cookie';
 
 export default async function githubCallbackHandler(req, res) {
   const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
-  const { code } = req.query;
+  const { code, redirect } = req.query; // Accept an optional redirect param
 
   if (!code) {
     res.status(400).send('No code provided');
@@ -33,6 +33,10 @@ export default async function githubCallbackHandler(req, res) {
     sameSite: 'lax',
   }));
 
-  res.writeHead(302, { Location: '/' });
+  // Option 2: Redirect to a dynamic URL based on a query param, fallback to "/"
+  const redirectUrl = redirect && typeof redirect === 'string'
+    ? decodeURIComponent(redirect)
+    : '/';
+  res.writeHead(302, { Location: redirectUrl });
   res.end();
 }

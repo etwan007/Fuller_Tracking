@@ -3,6 +3,18 @@ import { google } from 'googleapis';
 export default async function handler(req, res) {
   console.log('API /api/form-responses called');
 
+  // --- DESIGN MODE: Return hardcoded responses for UI design ---
+  if (process.env.NODE_ENV === 'development' && req.query.mock === '1') {
+    return res.status(200).json({
+      values: [
+        ["Timestamp", "Name", "Project Idea", "Notes"],
+        ["2024-05-25 10:00:00", "Alice", "Smart Plant Monitor", "Uses sensors to track soil moisture and sunlight."],
+        ["2024-05-25 10:05:00", "Bob", "DIY Weather Station", "Collects temperature, humidity, and wind data."],
+        ["2024-05-25 10:10:00", "Charlie", "Automated Pet Feeder", "Dispenses food on a schedule with mobile alerts."]
+      ]
+    });
+  }
+
   try {
     const sheetId = process.env.GOOGLE_SHEET_ID;
     const keyString = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
