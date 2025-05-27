@@ -69,7 +69,7 @@ export default function App() {
   // * Handles selecting a bullet and creating a repo with its project name
   const handleSelectBullet = useCallback(async (bullet) => {
     // Extract the project name (assume it's the first word or phrase before a colon or dash)
-    let name = bullet.split(":")[0].split("-")[0].trim();
+    let name = bullet.split(":")[0].split("_")[0].trim();
     // Remove special characters except spaces, dashes, and underscores
     name = name.replace(/[^a-zA-Z0-9 _-]/g, "");
     if (!name) name = bullet.trim();
