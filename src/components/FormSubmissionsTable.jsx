@@ -2,28 +2,28 @@ import "/src/app.css";
 
 export default function FormSubmissionsTable({ formResponses }) {
   return (
-    <section className="mt-4">
-      <h2 className="text-lg font-bold mb-2">Form Submissions</h2>
-      <table className="w-full border text-sm">
+    <section className="container">
+      <h2>Form Submissions</h2>
+      <table className="form-table">
         <thead>
           <tr>
             {(formResponses?.[0] || ['Time Submitted', 'Project Name', 'Description', 'Due Date']).map((header, i) => (
-              <th key={i} className="border p-1">{header}</th>
+              <th key={i}>{header}</th>
             ))}
           </tr>
         </thead>
-        <tbody className="main_table">
+        <tbody>
           {formResponses?.slice(1).length > 0 ? (
             formResponses.slice(1).map((row, i) => (
               <tr key={i}>
                 {row.map((cell, j) => (
-                  <td key={j} className="border p-1">{cell}</td>
+                  <td key={j}>{cell}</td>
                 ))}
               </tr>
             ))
           ) : (
-            <tr className="flex justify-center">
-              <p className="placeHolder">No submissions yet.</p>
+            <tr>
+              <td colSpan={4} className="form-table-placeholder">No submissions yet.</td>
             </tr>
           )}
         </tbody>
