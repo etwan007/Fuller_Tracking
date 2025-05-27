@@ -8,21 +8,36 @@ import GitHubRepoList from "./components/GitHubRepoList";
 import FormSubmissionsTable from "./components/FormSubmissionsTable";
 import AILoader from "./components/AILoader";
 import AddEventModal from "./components/AddEventModal";
+import AIBreakdownCard from "./components/AIBreakdownCard";
 import "./app.css";
 
 // ! Main App component
 export default function App() {
   // * State variables for managing UI and data
   const [projectName, setProjectName] = useState("");
-  const [aiSuggestion, setAiSuggestion] = useState("");
+  // Hardcoded AI suggestion for local UI editing
+  const [aiSuggestion, setAiSuggestion] = useState(
+    `Smart Plant Monitor: Uses sensors to track soil moisture and sunlight.
+DIY Weather Station: Collects temperature, humidity, and wind data.
+Automated Pet Feeder: Dispenses food on a schedule with mobile alerts.
+Bluetooth Door Lock: Unlocks via smartphone app and logs access times.
+Solar-Powered Garden Light: Automatically turns on at dusk and charges by day.`
+  );
+  const [currentBreakdown, setCurrentBreakdown] = useState(
+    `Smart Plant Monitor: Uses sensors to track soil moisture and sunlight.
+DIY Weather Station: Collects temperature, humidity, and wind data.
+Automated Pet Feeder: Dispenses food on a schedule with mobile alerts.
+Bluetooth Door Lock: Unlocks via smartphone app and logs access times.
+Solar-Powered Garden Light: Automatically turns on at dusk and charges by day.`
+  );
   const [githubData, setGithubData] = useState(null);
   const [githubError, setGithubError] = useState(null);
   const [calendarEvents, setCalendarEvents] = useState(null);
   const [formResponses, setFormResponses] = useState(null);
+  
 
   // * State for clarification/modification and bullet selection
   const [clarification, setClarification] = useState("");
-  const [currentBreakdown, setCurrentBreakdown] = useState("");
   const [selectedBullet, setSelectedBullet] = useState("");
   const [loading, setLoading] = useState(false);
   const [showAddEvent, setShowAddEvent] = useState(false);
@@ -217,113 +232,19 @@ export default function App() {
       {/* Google Form Submissions Table */}
       <FormSubmissionsTable formResponses={formResponses} />
 
-      <div className="container">
-        {/* Breakdown List */}
-        <ul className="breakdown-list">
-          {breakdownToShow
-            .split("\n")
-            .filter((line) => line.trim() !== "")
-            .map((line, idx) => (
-              <li
-                key={idx}
-                className={
-                  "breakdown-item" +
-                  (selectedBullet === line ? " breakdown-item-selected" : "")
-                }
-                onClick={() => setSelectedBullet(line)}
-                title="Click to select this bullet"
-              >
-                {line.replace(/^[\-\*\d\.\s]+/, "")}
-              </li>
-            ))}
-        </ul>
-        {/* * Show "Create Repo" button if a bullet is selected */}
-        {selectedBullet && (
-          <div className="selected-bullet-row">
-            <span className="selected-label">Selected:</span>
-            <span className="selected-bullet">
-              {selectedBullet.replace(/^[\-\*\d\.\s]+/, "")}
-            </span>
-            <Button onClick={() => handleSelectBullet(selectedBullet)}>
-              Make Repo from This
-            </Button>
-          </div>
-        )}
-
-        {/* * Project Name Input */}
-        <input
-          type="text"
-          placeholder="Enter Project Idea"
-          className="project-input"
-          value={projectName}
-          onChange={(e) => setProjectName(e.target.value)}
-        />
-
-        {/* * Action Buttons */}
-        <div className="action-buttons">
-          <Button onClick={handleAISuggestion}>Generate AI Breakdown</Button>
-        </div>
-
-        {/* * AI Suggestion & Clarification Card */}
-        {breakdownToShow && (
-          <Card className="ai-breakdown-card">
-            <CardContent>
-              <h2 className="section-title">AI Breakdown</h2>
-              <AILoader loading={loading} />
-              <ul className="breakdown-list">
-                {breakdownToShow
-                  .split("\n")
-                  .filter((line) => line.trim() !== "")
-                  .map((line, idx) => (
-                    <li
-                      key={idx}
-                      className={
-                        "breakdown-item" +
-                        (selectedBullet === line
-                          ? " breakdown-item-selected"
-                          : "")
-                      }
-                      onClick={() => setSelectedBullet(line)}
-                      title="Click to select this bullet"
-                    >
-                      {line.replace(/^[\-\*\d\.\s]+/, "")}
-                    </li>
-                  ))}
-              </ul>
-              {/* * Show "Create Repo" button if a bullet is selected */}
-              {selectedBullet && (
-                <div className="selected-bullet-row">
-                  <span className="selected-label">Selected:</span>
-                  <span className="selected-bullet">
-                    {selectedBullet.replace(/^[\-\*\d\.\s]+/, "")}
-                  </span>
-                  <Button onClick={() => handleSelectBullet(selectedBullet)}>
-                    Make Repo from This
-                  </Button>
-                </div>
-              )}
-              {/* * Clarification/Modification Box */}
-              <div className="clarify-section">
-                <h2 className="section-title">Clarify or Modify Breakdown</h2>
-                <textarea
-                  className="clarify-input"
-                  placeholder="Add clarifications or modifications to your project idea..."
-                  value={clarification}
-                  onChange={(e) => setClarification(e.target.value)}
-                  rows={3}
-                  disabled={loading}
-                />
-                <Button
-                  onClick={handleClarification}
-                  disabled={loading || !clarification.trim()}
-                >
-                  Submit Clarification
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+      <AIBreakdownCard
+        projectName={projectName}
+        setProjectName={setProjectName}
+        clarification={clarification}
+        setClarification={setClarification}
+        loading={loading}
+        breakdownToShow={breakdownToShow}
+        selectedBullet={selectedBullet}
+        setSelectedBullet={setSelectedBullet}
+        handleAISuggestion={handleAISuggestion}
+        handleClarification={handleClarification}
+        handleSelectBullet={handleSelectBullet}
+      />
 
       {/* GitHub Section */}
       <GitHubRepoList

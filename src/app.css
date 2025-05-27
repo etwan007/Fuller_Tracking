@@ -67,9 +67,15 @@ h2 {
  }
 
 .breakdown-list {
-  list-style: disc inside;
-  margin: 1em 0;
-  padding: 0;
+  list-style: none;
+  border-radius: 1em;
+  padding: 1em;
+  background-color: #f9f9f9;
+}
+
+marker {
+  color: #2563eb;
+  font-weight: bold;
 }
 
 .breakdown-item {
@@ -122,8 +128,8 @@ h2 {
 }
 
 .ai-breakdown-card {
-  margin-top: 2em;
-}
+  padding: 1em;
+ }
 
 .clarify-section {
   margin-top: 2em;
