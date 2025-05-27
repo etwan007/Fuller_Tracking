@@ -159,7 +159,12 @@ export default function App() {
 
   // * Fetches Google Form responses from backend
   const fetchFormResponses = useCallback(async () => {
-    const res = await fetch("/api/google-form-responses");
+    // Always use mock data in development for design purposes
+    let url = "/api/google-form-responses";
+    if (process.env.NODE_ENV === "development") {
+      url += "?mock=1";
+    }
+    const res = await fetch(url);
     if (res.ok) {
       const data = await res.json();
       setFormResponses(data.values); // * Update state with form responses
@@ -194,7 +199,6 @@ export default function App() {
     }
 
     fetchFormResponses(); // * Fetch form responses on load
-    fetchGitHubFiles(); // Always try to fetch repos on mount
 
     // * Set up polling to refresh form responses every 10 seconds
     const interval = setInterval(fetchFormResponses, 10000);
