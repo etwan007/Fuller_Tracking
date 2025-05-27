@@ -191,30 +191,43 @@ h2 {
 
 .form-table {
   width: 100%;
-  
+  padding: .3em;
   margin-top: 1rem;
   background: #f9f9f9;
   border-radius: 1em;
+  border-collapse: separate;
+  border-spacing: .5em 0.5em; /* space between rows */
 }
 
-.form-table thead {
-  background: #2563eb; /* Your desired color */
-  border-radius: 0%;
+/* Header row: space out the titles */
+.form-table thead th {
+  background: #c7c7c7;
+
+  padding: .5em .5em; /* more horizontal padding for spacing */
+  border-top-left-radius: 1em;
+  border-top-right-radius: 1em;
+  text-align: center;
+
 }
 
-.form-table th {
-  background: #2563eb; /* Ensures each header cell is colored */
-  color: #fff;         /* Optional: makes text white for contrast */
-}
-
-.form-table th,
+/* Remove border-radius from all td for a unified look */
 .form-table td {
-  border: 1px solid #868686;
+  background: #fff;
   padding: 0.5em 1em;
-  border-radius: 1em;
+  border-radius: 0;
 }
 
+/* Only the data rows get a border around the whole row */
+.form-table tbody tr {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 0.5em;
+}
 
+/* Remove background from th in .form-table th, .form-table td rule if present */
+.form-table th {
+  background: none;
+}
 
 /* === GITHUB REPO LIST === */
 .repo-list-section {

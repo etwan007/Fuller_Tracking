@@ -15,14 +15,14 @@ export default function FormSubmissionsTable({ formResponses }) {
         <tbody>
           {formResponses?.slice(1).length > 0 ? (
             formResponses.slice(1).map((row, i) => (
-              <tr key={i}>
+              <tr className="form-submissions" key={i}>
                 {row.map((cell, j) => (
                   <td key={j}>{cell}</td>
                 ))}
               </tr>
             ))
           ) : (
-            <tr>
+            <tr className="form-submissions">
               <td colSpan={4} className="form-table-placeholder">No submissions yet.</td>
             </tr>
           )}
