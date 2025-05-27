@@ -1,0 +1,360 @@
+/* === GLOBAL STYLES === */
+body {
+  background: #f8fafc;
+  color: #222;
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 5em;
+  color: #333;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  text-align: left;
+}
+
+/* === APP.JSX === */
+.main-container {
+  padding: 1.5rem;
+  max-width: 700px;
+  margin: 0 auto;
+  background: #f8fafc;
+  min-height: 100vh;
+  border-radius: 1rem;
+}
+
+.main-title {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #2563eb;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.breakdown-list {
+  list-style: disc inside;
+  margin: 1em 0;
+  padding: 0;
+}
+
+.breakdown-item {
+  cursor: pointer;
+  border-radius: 0.25em;
+  padding: 0.25em 0.5em;
+  margin-bottom: 0.25em;
+  transition: background 0.2s;
+}
+
+.breakdown-item:hover {
+  background: #e0e7ef;
+}
+
+.breakdown-item-selected {
+  background: #bfdbfe;
+  font-weight: bold;
+}
+
+.selected-bullet-row {
+  margin-top: 1em;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.selected-label {
+  font-size: 0.95em;
+  font-weight: 600;
+}
+
+.selected-bullet {
+  font-style: italic;
+}
+
+.project-input {
+  width: 100%;
+  padding: 0.75em;
+  border: 1px solid #bbb;
+  border-radius: 0.5em;
+  margin-bottom: 1em;
+  font-size: 1em;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1em;
+  flex-wrap: wrap;
+  margin-bottom: 1em;
+}
+
+.ai-breakdown-card {
+  margin-top: 2em;
+}
+
+.clarify-section {
+  margin-top: 2em;
+}
+
+.clarify-input {
+  width: 100%;
+  padding: 0.5em;
+  border: 1px solid #bbb;
+  border-radius: 0.5em;
+  margin-bottom: 0.5em;
+  font-size: 1em;
+}
+
+.calendar-card {
+  margin-top: 2em;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1em;
+}
+
+.calendar-title {
+  font-weight: 500;
+  font-size: 1.1em;
+}
+
+/* === BUTTON.JSX === */
+.btn {
+  padding: 0.5em 1.2em;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 0.4em;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-weight: 500;
+  margin: 0.2em 0;
+}
+
+.btn:hover,
+.btn:focus {
+  background: #1d4ed8;
+}
+
+/* === CARD.JSX === */
+.card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75em;
+  box-shadow: 0 2px 8px #0001;
+  padding: 1.2em;
+  background: #fff;
+  margin-bottom: 1.5em;
+}
+
+.card-content {
+  color: #222;
+}
+
+/* === FORM SUBMISSIONS TABLE === */
+.form-section {
+  margin-top: 1.5em;
+}
+
+.form-table-title {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.form-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: #f9f9f9;
+}
+
+.form-table th,
+.form-table td {
+  border: 1px solid #ddd;
+  padding: 0.5em 1em;
+  text-align: left;
+}
+
+.form-table th {
+  background: #e0e7ef;
+}
+
+.form-table tr:nth-child(even) {
+  background: #f3f6fa;
+}
+
+.form-table tr:hover {
+  background: #dbeafe;
+}
+
+.form-table-placeholder {
+  text-align: center;
+  color: #888;
+  padding: 1em;
+}
+
+/* === GITHUB REPO LIST === */
+.repo-list-section {
+  margin-top: 2em;
+}
+
+.repo-list-title {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.repo-list {
+  list-style: disc inside;
+  max-height: 12em;
+  overflow-y: auto;
+  margin-bottom: 1em;
+}
+
+.repo-list li {
+  margin-bottom: 0.3em;
+}
+
+.repo-list a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.repo-list a:hover {
+  color: #1d4ed8;
+}
+
+/* === GOOGLE CALENDAR VIEW === */
+.google-calendar-section {
+  margin-top: 2em;
+}
+
+/* === GOOGLE LOGIN === */
+.google-login-btn {
+  background: #ea4335;
+  color: #fff;
+  border: none;
+  border-radius: 0.4em;
+  padding: 0.5em 1.2em;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-weight: 500;
+}
+
+.google-login-btn:hover {
+  background: #c5221f;
+}
+
+/* === AI LOADER === */
+.ai-loader {
+  margin-bottom: 0.5em;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.ai-loader-spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid #60a5fa;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* === ADD EVENT MODAL === */
+.add-event-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.add-event-modal-form {
+  background: #fff;
+  padding: 1.5em;
+  border-radius: 0.75em;
+  box-shadow: 0 2px 8px #0002;
+  width: 22em;
+}
+
+.add-event-modal-title {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.add-event-modal-input,
+.add-event-modal-textarea {
+  width: 100%;
+  border: 1px solid #bbb;
+  border-radius: 0.4em;
+  padding: 0.5em;
+  margin-bottom: 0.7em;
+  font-size: 1em;
+}
+
+.add-event-modal-label {
+  display: block;
+  margin-bottom: 0.2em;
+  font-size: 0.9em;
+  color: #444;
+}
+
+.add-event-modal-error {
+  color: #dc2626;
+  margin-bottom: 0.7em;
+}
+
+.add-event-modal-actions {
+  display: flex;
+  gap: 0.7em;
+}
+
+.add-event-modal-btn-save {
+  background: #2563eb;
+  color: #fff;
+  padding: 0.4em 1em;
+  border: none;
+  border-radius: 0.4em;
+  cursor: pointer;
+}
+
+.add-event-modal-btn-cancel {
+  background: #e5e7eb;
+  color: #222;
+  padding: 0.4em 1em;
+  border: none;
+  border-radius: 0.4em;
+  cursor: pointer;
+}
+
+/* === PLACEHOLDER === */
+.placeHolder {
+  color: #888;
+  text-align: center;
+  padding: 1em;
+}
+

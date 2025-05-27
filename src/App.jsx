@@ -1,37 +1,38 @@
 // ! Import React hooks and custom components
-import { useState, useEffect, useCallback } from "react"; // * React hooks for state management and side effects
-import { Button } from "./components/Button"; // * Custom Button component
-import { Card, CardContent } from "./components/Card"; // * Custom Card components for UI
-import { GoogleLogin } from "./components/GoogleLogin"; // * Google OAuth login button
-import { GoogleCalendarView } from "./components/GoogleCalendarView"; // * Calendar display component
-import GitHubRepoList from "./components/GitHubRepoList"; // * GitHub repository list component
-import FormSubmissionsTable from "./components/FormSubmissionsTable"; // * Google Form submissions table component
-import AILoader from "./components/AILoader"; // * AI loading indicator component
-import AddEventModal from "./components/AddEventModal"; // * Modal for adding calendar events
+import { useState, useEffect, useCallback } from "react";
+import { Button } from "./components/Button";
+import { Card, CardContent } from "./components/Card";
+import { GoogleLogin } from "./components/GoogleLogin";
+import { GoogleCalendarView } from "./components/GoogleCalendarView";
+import GitHubRepoList from "./components/GitHubRepoList";
+import FormSubmissionsTable from "./components/FormSubmissionsTable";
+import AILoader from "./components/AILoader";
+import AddEventModal from "./components/AddEventModal";
+import "./app.css";
 
 // ! Main App component
 export default function App() {
   // * State variables for managing UI and data
-  const [projectName, setProjectName] = useState(""); // * Stores the project name input by the user
-  const [aiSuggestion, setAiSuggestion] = useState(""); // * Stores the AI's suggestion/response
-  const [githubData, setGithubData] = useState(null); // * Stores GitHub repo data
+  const [projectName, setProjectName] = useState("");
+  const [aiSuggestion, setAiSuggestion] = useState("");
+  const [githubData, setGithubData] = useState(null);
   const [githubError, setGithubError] = useState(null);
-  const [calendarEvents, setCalendarEvents] = useState(null); // * Stores Google Calendar events
-  const [formResponses, setFormResponses] = useState(null); // * Stores Google Form responses
+  const [calendarEvents, setCalendarEvents] = useState(null);
+  const [formResponses, setFormResponses] = useState(null);
 
   // * State for clarification/modification and bullet selection
-  const [clarification, setClarification] = useState(""); // * Stores user clarification or modification input
-  const [currentBreakdown, setCurrentBreakdown] = useState(""); // * Stores the AI's clarified/modified response
-  const [selectedBullet, setSelectedBullet] = useState(""); // * Stores the bullet selected by the user
-  const [loading, setLoading] = useState(false); // * Indicator for AI loading
-  const [showAddEvent, setShowAddEvent] = useState(false); // * Controls Add Event modal visibility
+  const [clarification, setClarification] = useState("");
+  const [currentBreakdown, setCurrentBreakdown] = useState("");
+  const [selectedBullet, setSelectedBullet] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showAddEvent, setShowAddEvent] = useState(false);
 
   // * Handles AI suggestion generation using the project name
   const handleAISuggestion = useCallback(async () => {
-    if (!projectName.trim()) return; // ? Guard: Don't run if input is empty
-    setLoading(true); // * Set loading state
-    setSelectedBullet(""); // * Clear selected bullet
-    setClarification(""); // * Clear previous clarifications
+    if (!projectName.trim()) return;
+    setLoading(true);
+    setSelectedBullet("");
+    setClarification("");
     const prompt = `Give me 5 unique and creative project ideas based on this concept. Each idea should be presented as a single bullet point and must begin with a unique, descriptive project name that relates to the concept. Each bullet should contain exactly two sentences describing the idea. The ideas should focus on what can be built using hobby-grade tools and components, unless otherwise specified. Do not split ideas into multiple bullets. Separate each idea with a line break.: ${projectName}`; // * Prompt for AI
 
     // * Call backend API to get AI suggestion
@@ -209,72 +210,76 @@ export default function App() {
 
   // --- Render ---
   return (
-    <main className="p-4 max-w-xl mx-auto bg-gray-50 min-h-screen">
+    <main className="main-container">
       {/* * App Title */}
-      <h1 className="text-3xl font-bold mb-6">Fuller Tracking</h1>
+      <h1 className="main-title">Fuller Tracking</h1>
 
       {/* Google Form Submissions Table */}
       <FormSubmissionsTable formResponses={formResponses} />
-      <ul className="list-disc ml-5">
-              {breakdownToShow
-                .split("\n")
-                .filter((line) => line.trim() !== "")
-                .map((line, idx) => (
-                  <li
-                    key={idx}
-                    className={`cursor-pointer hover:bg-blue-100 rounded px-1 ${
-                      selectedBullet === line ? "bg-blue-200 font-bold" : ""
-                    }`}
-                    onClick={() => setSelectedBullet(line)}
-                    title="Click to select this bullet"
-                  >
-                    {line.replace(/^[\-\*\d\.\s]+/, "")}
-                  </li>
-                ))}
-            </ul>
-            {/* * Show "Create Repo" button if a bullet is selected */}
-            {selectedBullet && (
-              <div className="mt-3 flex items-center gap-2">
-                <span className="text-sm font-semibold">Selected:</span>
-                <span className="italic">
-                  {selectedBullet.replace(/^[\-\*\d\.\s]+/, "")}
-                </span>
-                <Button onClick={() => handleSelectBullet(selectedBullet)}>
-                  Make Repo from This
-                </Button>
-              </div>
-            )}
+
+      {/* Breakdown List */}
+      <ul className="breakdown-list">
+        {breakdownToShow
+          .split("\n")
+          .filter((line) => line.trim() !== "")
+          .map((line, idx) => (
+            <li
+              key={idx}
+              className={
+                "breakdown-item" +
+                (selectedBullet === line ? " breakdown-item-selected" : "")
+              }
+              onClick={() => setSelectedBullet(line)}
+              title="Click to select this bullet"
+            >
+              {line.replace(/^[\-\*\d\.\s]+/, "")}
+            </li>
+          ))}
+      </ul>
+      {/* * Show "Create Repo" button if a bullet is selected */}
+      {selectedBullet && (
+        <div className="selected-bullet-row">
+          <span className="selected-label">Selected:</span>
+          <span className="selected-bullet">
+            {selectedBullet.replace(/^[\-\*\d\.\s]+/, "")}
+          </span>
+          <Button onClick={() => handleSelectBullet(selectedBullet)}>
+            Make Repo from This
+          </Button>
+        </div>
+      )}
 
       {/* * Project Name Input */}
       <input
         type="text"
         placeholder="Enter Project Idea"
-        className="w-full p-3 border rounded mb-4"
+        className="project-input"
         value={projectName}
         onChange={(e) => setProjectName(e.target.value)}
       />
 
       {/* * Action Buttons */}
-      <div className="flex gap-2 flex-wrap">
+      <div className="action-buttons">
         <Button onClick={handleAISuggestion}>Generate AI Breakdown</Button>
       </div>
 
       {/* * AI Suggestion & Clarification Card */}
       {breakdownToShow && (
-        <Card className="mt-6">
+        <Card className="ai-breakdown-card">
           <CardContent>
-            <h2 className="font-semibold mb-2">AI Breakdown</h2>
+            <h2 className="section-title">AI Breakdown</h2>
             <AILoader loading={loading} />
-            <ul className="list-disc ml-5">
+            <ul className="breakdown-list">
               {breakdownToShow
                 .split("\n")
                 .filter((line) => line.trim() !== "")
                 .map((line, idx) => (
                   <li
                     key={idx}
-                    className={`cursor-pointer hover:bg-blue-100 rounded px-1 ${
-                      selectedBullet === line ? "bg-blue-200 font-bold" : ""
-                    }`}
+                    className={
+                      "breakdown-item" +
+                      (selectedBullet === line ? " breakdown-item-selected" : "")
+                    }
                     onClick={() => setSelectedBullet(line)}
                     title="Click to select this bullet"
                   >
@@ -284,9 +289,9 @@ export default function App() {
             </ul>
             {/* * Show "Create Repo" button if a bullet is selected */}
             {selectedBullet && (
-              <div className="mt-3 flex items-center gap-2">
-                <span className="text-sm font-semibold">Selected:</span>
-                <span className="italic">
+              <div className="selected-bullet-row">
+                <span className="selected-label">Selected:</span>
+                <span className="selected-bullet">
                   {selectedBullet.replace(/^[\-\*\d\.\s]+/, "")}
                 </span>
                 <Button onClick={() => handleSelectBullet(selectedBullet)}>
@@ -295,12 +300,12 @@ export default function App() {
               </div>
             )}
             {/* * Clarification/Modification Box */}
-            <div className="mt-6">
-              <h2 className="font-semibold mb-2">
+            <div className="clarify-section">
+              <h2 className="section-title">
                 Clarify or Modify Breakdown
               </h2>
               <textarea
-                className="w-full p-2 border rounded mb-2"
+                className="clarify-input"
                 placeholder="Add clarifications or modifications to your project idea..."
                 value={clarification}
                 onChange={(e) => setClarification(e.target.value)}
@@ -326,15 +331,15 @@ export default function App() {
       />
 
       {/* Google Calendar Section */}
-      <Card className="mt-6">
+      <Card className="calendar-card">
         <CardContent>
-          <h2 className="font-semibold mb-2">Google Calendar:</h2>
+          <h2 className="section-title">Google Calendar:</h2>
           {!calendarEvents ? (
             <GoogleLogin />
           ) : calendarEvents.length > 0 ? (
             <>
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="font-medium">Upcoming Events</h3>
+              <div className="calendar-header">
+                <h3 className="calendar-title">Upcoming Events</h3>
                 <Button onClick={() => setShowAddEvent(true)}>Add Event</Button>
               </div>
               <GoogleCalendarView events={calendarEvents} />

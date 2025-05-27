@@ -1,3 +1,5 @@
+import "/src/app.css";
+
 export default function FormSubmissionsTable({ formResponses }) {
   return (
     <section className="mt-4">
@@ -10,7 +12,7 @@ export default function FormSubmissionsTable({ formResponses }) {
             ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody className="main_table">
           {formResponses?.slice(1).length > 0 ? (
             formResponses.slice(1).map((row, i) => (
               <tr key={i}>
@@ -20,8 +22,8 @@ export default function FormSubmissionsTable({ formResponses }) {
               </tr>
             ))
           ) : (
-            <tr>
-              <td colSpan={3} className="text-center p-2">No submissions yet.</td>
+            <tr className="flex justify-center">
+              <p className="placeHolder">No submissions yet.</p>
             </tr>
           )}
         </tbody>
