@@ -120,6 +120,7 @@ h2 {
   border-radius: 1em;
   padding: 1em;
   background-color: #f9f9f9;
+  margin: 1em, 0, 0, 0;
 }
 
 .breakdown-item {
@@ -173,9 +174,9 @@ h2 {
   border: none;
   border-radius: 1em;
   font-size: 1em;
-  
   resize: vertical;
   box-sizing: border-box;
+  margin-top: 1em;
 }
 
 .calendar-card {
@@ -278,14 +279,15 @@ h2 {
 .repo-list {
   list-style: none;
   border-radius: 1em;
-  padding: 1em;
+  padding: .5em;
   background-color: #f9f9f9;
   text-justify: center;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 1em; /* space between repo items */
+  justify-content: left;
+  gap: 2em; /* space between repo items */
+  max-width: 900px;
 }
 
 
