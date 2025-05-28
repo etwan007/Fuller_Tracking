@@ -34,7 +34,16 @@ h2 {
   justify-content: center;
   align-items: flex-start;
   gap: 2em; /* space between the two containers */
-  
+  padding: .5rem;
+  border-radius: 1em;
+}
+
+.row2-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2em; /* space between the two containers */
   padding: .5rem;
   border-radius: 1em;
 }
@@ -91,7 +100,7 @@ h2 {
   font-weight: bold;
   color: #ffffff;
   text-align: center;
-  margin: 0;
+  margin: 1em, 0, 0;
  }
 
 .breakdown-list {
@@ -268,15 +277,13 @@ h2 {
 }
 
 .repo-list {
-  list-style: disc inside;
-  max-height: 12em;
-  overflow-y: auto;
-  margin-bottom: 1em;
+  list-style: none;
+  border-radius: 1em;
+  padding: 1em;
+  background-color: #f9f9f9;
+  text-justify: center;
 }
 
-.repo-list li {
-  margin-bottom: 0.3em;
-}
 
 .repo-list a {
   color: #2563eb;
