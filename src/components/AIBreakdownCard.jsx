@@ -22,7 +22,7 @@ export default function AIBreakdownCard({
       <input
         type="text"
         placeholder="Enter Project Idea"
-        className="project-input"
+        className="input"
         value={projectName}
         onChange={(e) => setProjectName(e.target.value)}
       />
@@ -30,9 +30,9 @@ export default function AIBreakdownCard({
 
       
       {!breakdownToShow && (
-        <div className="action-buttons">
+        
           <Button onClick={handleAISuggestion}>Generate AI Breakdown</Button>
-        </div>
+        
       )}
 
      
@@ -74,7 +74,7 @@ export default function AIBreakdownCard({
                     
               <div className="clarification-row">
               <textarea
-                className="clarify-input"
+                className="input"
                 placeholder="Add clarifications or modifications to your project idea..."
                 value={clarification}
                 onChange={(e) => setClarification(e.target.value)}
