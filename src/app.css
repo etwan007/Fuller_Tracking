@@ -1,8 +1,8 @@
 /* === GLOBAL STYLES === */
 body {
-  background: #f8fafc;
+  background: #212121;
   color: #222;
-  font-family: sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
 }
@@ -28,14 +28,26 @@ h2 {
 
 /* Custom (Not AI) */
 
+.row1-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2em; /* space between the two containers */
+  
+  padding: .5rem;
+  border-radius: 1em;
+}
+
+
 .container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   background-color: #bbb;
   justify-content: center;
-  padding: .5rem;
+  padding: 1rem;
   max-width: 90%;
-  margin: auto auto 1.5rem auto;
   border-radius: 1em;
 }
 
@@ -45,14 +57,29 @@ h2 {
   padding: 1em;
 }
 
+.button {
+  padding: 0.5em 1em;           /* px-4 py-2 */
+  background: #2563eb;          /* bg-blue-600 */
+  color: #fff;                  /* text-white */
+  border: none;
+  border-radius: 0.375em;       /* rounded */
+  transition: background 0.2s;  /* transition */
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  display: block;
+}
 
+.button:hover,
+.button:focus {
+  background: #1d4ed8;          /* hover:bg-blue-700 */
+}
 
 /* === APP.JSX === */
 .main-container {
   padding: 1.5rem;
   max-width: 100%;
   margin: 0 0;
-  background: #212121;
   min-height: 100vh;
   
   justify-content: center;
@@ -64,6 +91,7 @@ h2 {
   font-weight: bold;
   color: #ffffff;
   text-align: center;
+  margin: 0;
  }
 
 .breakdown-list {
@@ -73,16 +101,12 @@ h2 {
   background-color: #f9f9f9;
 }
 
-marker {
-  color: #2563eb;
-  font-weight: bold;
-}
-
 .breakdown-item {
   cursor: pointer;
-  border-radius: 0.25em;
-  padding: 0.25em 0.5em;
+  border-radius: 1em;
+  padding: 0.5em 0.5em;
   margin-bottom: 0.25em;
+  background: #dddddd;
   transition: background 0.2s;
 }
 
@@ -96,10 +120,11 @@ marker {
 }
 
 .selected-bullet-row {
-  margin-top: 1em;
+  
   display: flex;
   align-items: center;
-  gap: 0.5em;
+  justify-content: center;
+  
 }
 
 .selected-label {
@@ -127,21 +152,25 @@ marker {
   margin-bottom: 1em;
 }
 
-.ai-breakdown-card {
-  padding: 1em;
- }
 
-.clarify-section {
-  margin-top: 2em;
+.clarification-row {
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
 }
 
 .clarify-input {
   width: 100%;
-  padding: 0.5em;
-  border: 1px solid #bbb;
-  border-radius: 0.5em;
-  margin-bottom: 0.5em;
+  padding:  1em;
+  border: none;
+  border-radius: 1em;
   font-size: 1em;
+  margin: 1em 0;
+  resize: vertical;
+  box-sizing: border-box;
 }
 
 .calendar-card {
@@ -160,24 +189,7 @@ marker {
   font-size: 1.1em;
 }
 
-/* === BUTTON.JSX === */
-.btn {
-  padding: 0.5em 1.2em;
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 0.4em;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background 0.2s;
-  font-weight: 500;
-  margin: 0.2em 0;
-}
-
-.btn:hover,
-.btn:focus {
-  background: #1d4ed8;
-}
+/
 
 /* === CARD.JSX === */
 .card {
@@ -203,12 +215,19 @@ marker {
   border-radius: 1em;
   border-collapse: separate;
   border-spacing: .5em 0.5em; /* space between rows */
+  font-size: 1em;
+}
+
+/* When the screen is 600px or less, make the font smaller */
+@media (max-width: 600px) {
+  .form-table {
+    font-size: 0.8em;
+  }
 }
 
 /* Header row: space out the titles */
 .form-table thead th {
   background: #c7c7c7;
-
   padding: .5em .5em; /* more horizontal padding for spacing */
   border-top-left-radius: 1em;
   border-top-right-radius: 1em;
@@ -234,6 +253,8 @@ marker {
 .form-table th {
   background: none;
 }
+
+
 
 /* === GITHUB REPO LIST === */
 .repo-list-section {
@@ -387,5 +408,12 @@ marker {
   color: #888;
   text-align: center;
   padding: 1em;
+}
+
+/* Give both containers a max width and allow them to shrink/grow */
+.form-section,
+.ai-breakdown-card {
+  flex: 1 1 350px;      /* grow, shrink, basis */
+  
 }
 

@@ -3,10 +3,10 @@ import { Button } from './Button';
 
 export default function GitHubRepoList({ githubData, githubError, onLogin }) {
   return (
-    <Card className="mt-6">
+    <Card className="container">
       <CardContent>
-        <h2 className="font-semibold mb-2">GitHub Repositories:</h2>
-        <ul className="list-disc ml-5 max-h-48 overflow-auto">
+        <h2>GitHub Repositories:</h2>
+        <ul className="breakdown-list">
           {githubError ? (
             <li>{githubError}</li>
           ) : githubData?.files?.length > 0 ? (

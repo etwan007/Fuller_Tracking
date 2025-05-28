@@ -1,8 +1,6 @@
-import "/src/app.css";
-
 export default function FormSubmissionsTable({ formResponses }) {
   return (
-    <section className="container">
+    <div className="container">
       <h2>Form Submissions</h2>
       <table className="form-table">
         <thead>
@@ -28,6 +26,6 @@ export default function FormSubmissionsTable({ formResponses }) {
           )}
         </tbody>
       </table>
-    </section>
+    </div>
   );
 }

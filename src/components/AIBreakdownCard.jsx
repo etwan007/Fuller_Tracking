@@ -17,7 +17,7 @@ export default function AIBreakdownCard({
 }) {
   return (
     <div className="container">
-      {/* Project Name Input (always visible) */}
+      
       {!breakdownToShow && (
       <input
         type="text"
@@ -28,16 +28,16 @@ export default function AIBreakdownCard({
       />
       )}
 
-      {/* Only show the Generate AI Breakdown button if there is no breakdown yet */}
+      
       {!breakdownToShow && (
         <div className="action-buttons">
           <Button onClick={handleAISuggestion}>Generate AI Breakdown</Button>
         </div>
       )}
 
-      {/* AI Suggestion & Clarification Card */}
+     
       {breakdownToShow && (
-        <Card className="ai-breakdown-card">
+        <Card>
           <CardContent>
             <h2>AI Breakdown</h2>
             <AILoader loading={loading} />
@@ -62,22 +62,17 @@ export default function AIBreakdownCard({
                 ))}
             </ul>
 
-            {/* Show "Create Repo" button if a bullet is selected */}
+            
             {selectedBullet && (
               <div className="selected-bullet-row">
-                <span className="selected-label">Selected:</span>
-                <span className="selected-bullet">
-                  {selectedBullet.replace(/^[\-\*\d\.\s]+/, "")}
-                </span>
                 <Button onClick={() => handleSelectBullet(selectedBullet)}>
                   Make Repo from This
                 </Button>
               </div>
             )}
 
-            {/* Clarification/Modification Box */}
-            <div className="clarify-section">
-              <h2 className="section-title">Clarify or Modify Breakdown</h2>
+                    
+              <div className="clarification-row">
               <textarea
                 className="clarify-input"
                 placeholder="Add clarifications or modifications to your project idea..."
@@ -92,7 +87,7 @@ export default function AIBreakdownCard({
               >
                 Submit Clarification
               </Button>
-            </div>
+           </div>
           </CardContent>
         </Card>
       )}

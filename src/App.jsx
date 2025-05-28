@@ -9,6 +9,7 @@ import FormSubmissionsTable from "./components/FormSubmissionsTable";
 import AILoader from "./components/AILoader";
 import AddEventModal from "./components/AddEventModal";
 import AIBreakdownCard from "./components/AIBreakdownCard";
+import GoogleEventsCard from "./components/GoogleEventsCard";
 import "./app.css";
 
 // ! Main App component
@@ -34,7 +35,6 @@ Solar-Powered Garden Light: Automatically turns on at dusk and charges by day.`
   const [githubError, setGithubError] = useState(null);
   const [calendarEvents, setCalendarEvents] = useState(null);
   const [formResponses, setFormResponses] = useState(null);
-  
 
   // * State for clarification/modification and bullet selection
   const [clarification, setClarification] = useState("");
@@ -225,60 +225,48 @@ Solar-Powered Garden Light: Automatically turns on at dusk and charges by day.`
 
   // --- Render ---
   return (
-    <main className="main-container">
-      {/* * App Title */}
+    <main>
       <h1 className="main-title">Fuller Tracking</h1>
+      <div className="main-container">
+        <div className="row1-container">
+        <FormSubmissionsTable formResponses={formResponses} />
 
-      {/* Google Form Submissions Table */}
-      <FormSubmissionsTable formResponses={formResponses} />
+        <AIBreakdownCard
+          projectName={projectName}
+          setProjectName={setProjectName}
+          clarification={clarification}
+          setClarification={setClarification}
+          loading={loading}
+          breakdownToShow={breakdownToShow}
+          selectedBullet={selectedBullet}
+          setSelectedBullet={setSelectedBullet}
+          handleAISuggestion={handleAISuggestion}
+          handleClarification={handleClarification}
+          handleSelectBullet={handleSelectBullet}
+        />
+</div>
+        <div className="row2-container">
+        <GitHubRepoList
+          githubData={githubData}
+          githubError={githubError}
+          onLogin={handleGitHubAuth}
+        />
 
-      <AIBreakdownCard
-        projectName={projectName}
-        setProjectName={setProjectName}
-        clarification={clarification}
-        setClarification={setClarification}
-        loading={loading}
-        breakdownToShow={breakdownToShow}
-        selectedBullet={selectedBullet}
-        setSelectedBullet={setSelectedBullet}
-        handleAISuggestion={handleAISuggestion}
-        handleClarification={handleClarification}
-        handleSelectBullet={handleSelectBullet}
-      />
+        <GoogleEventsCard
+          calendarEvents={calendarEvents}
+          showAddEvent={showAddEvent}
+          setShowAddEvent={setShowAddEvent}
+          fetchCalendar={fetchCalendar}
+        />
 
-      {/* GitHub Section */}
-      <GitHubRepoList
-        githubData={githubData}
-        githubError={githubError}
-        onLogin={handleGitHubAuth}
-      />
-
-      {/* Google Calendar Section */}
-      <Card className="calendar-card">
-        <CardContent>
-          <h2 className="section-title">Google Calendar:</h2>
-          {!calendarEvents ? (
-            <GoogleLogin />
-          ) : calendarEvents.length > 0 ? (
-            <>
-              <div className="calendar-header">
-                <h3 className="calendar-title">Upcoming Events</h3>
-                <Button onClick={() => setShowAddEvent(true)}>Add Event</Button>
-              </div>
-              <GoogleCalendarView events={calendarEvents} />
-            </>
-          ) : (
-            <p>No calendar events found</p>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Add Event Modal */}
-      <AddEventModal
-        open={showAddEvent}
-        onClose={() => setShowAddEvent(false)}
-        onEventAdded={fetchCalendar} // Refresh events after adding
-      />
+        {/* Add Event Modal */}
+        <AddEventModal
+          open={showAddEvent}
+          onClose={() => setShowAddEvent(false)}
+          onEventAdded={fetchCalendar} // Refresh events after adding
+        />
+        </div>
+      </div>
     </main>
   );
 }
