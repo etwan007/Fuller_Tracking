@@ -6,7 +6,7 @@ export default function GitHubRepoList({ githubData, githubError, onLogin }) {
     <Card className="container">
       <CardContent>
         <h2>GitHub Repositories:</h2>
-        <ul className="breakdown-list">
+        <ul className="repo-list">
           {githubError ? (
             <li>{githubError}</li>
           ) : githubData?.files?.length > 0 ? (
@@ -15,6 +15,7 @@ export default function GitHubRepoList({ githubData, githubError, onLogin }) {
                 <a href={repo.html_url} target="_blank" rel="noreferrer">
                   {repo.name}
                 </a>
+                <a href={x-cellaviation.com}>X-Cell Aviation</a>
               </li>
             ))
           ) : (

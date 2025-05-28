@@ -17,20 +17,9 @@ export default function App() {
   // * State variables for managing UI and data
   const [projectName, setProjectName] = useState("");
   // Hardcoded AI suggestion for local UI editing
-  const [aiSuggestion, setAiSuggestion] = useState(
-    `Smart Plant Monitor: Uses sensors to track soil moisture and sunlight.
-DIY Weather Station: Collects temperature, humidity, and wind data.
-Automated Pet Feeder: Dispenses food on a schedule with mobile alerts.
-Bluetooth Door Lock: Unlocks via smartphone app and logs access times.
-Solar-Powered Garden Light: Automatically turns on at dusk and charges by day.`
-  );
-  const [currentBreakdown, setCurrentBreakdown] = useState(
-    `Smart Plant Monitor: Uses sensors to track soil moisture and sunlight.
-DIY Weather Station: Collects temperature, humidity, and wind data.
-Automated Pet Feeder: Dispenses food on a schedule with mobile alerts.
-Bluetooth Door Lock: Unlocks via smartphone app and logs access times.
-Solar-Powered Garden Light: Automatically turns on at dusk and charges by day.`
-  );
+  const [aiSuggestion, setAiSuggestion] = useState("");
+
+  const [currentBreakdown, setCurrentBreakdown] = useState("");
   const [githubData, setGithubData] = useState(null);
   const [githubError, setGithubError] = useState(null);
   const [calendarEvents, setCalendarEvents] = useState(null);
@@ -215,9 +204,10 @@ Solar-Powered Garden Light: Automatically turns on at dusk and charges by day.`
     }
 
     fetchFormResponses(); // * Fetch form responses on load
+    fetchGitHubFiles(); // <-- Add this line
 
     // * Set up polling to refresh form responses every 10 seconds
-    const interval = setInterval(fetchFormResponses, 10000);
+    const interval = setInterval(fetchFormResponses, fetchGitHubFiles, 10000);
     return () => clearInterval(interval); // * Cleanup on unmount
   }, [fetchCalendar, fetchFormResponses, fetchGitHubFiles]);
 
@@ -229,42 +219,42 @@ Solar-Powered Garden Light: Automatically turns on at dusk and charges by day.`
       <h1 className="main-title">Fuller Tracking</h1>
       <div className="main-container">
         <div className="row1-container">
-        <FormSubmissionsTable formResponses={formResponses} />
+          <FormSubmissionsTable formResponses={formResponses} />
 
-        <AIBreakdownCard
-          projectName={projectName}
-          setProjectName={setProjectName}
-          clarification={clarification}
-          setClarification={setClarification}
-          loading={loading}
-          breakdownToShow={breakdownToShow}
-          selectedBullet={selectedBullet}
-          setSelectedBullet={setSelectedBullet}
-          handleAISuggestion={handleAISuggestion}
-          handleClarification={handleClarification}
-          handleSelectBullet={handleSelectBullet}
-        />
-</div>
+          <AIBreakdownCard
+            projectName={projectName}
+            setProjectName={setProjectName}
+            clarification={clarification}
+            setClarification={setClarification}
+            loading={loading}
+            breakdownToShow={breakdownToShow}
+            selectedBullet={selectedBullet}
+            setSelectedBullet={setSelectedBullet}
+            handleAISuggestion={handleAISuggestion}
+            handleClarification={handleClarification}
+            handleSelectBullet={handleSelectBullet}
+          />
+        </div>
         <div className="row2-container">
-        <GitHubRepoList
-          githubData={githubData}
-          githubError={githubError}
-          onLogin={handleGitHubAuth}
-        />
+          <GitHubRepoList
+            githubData={githubData}
+            githubError={githubError}
+            onLogin={handleGitHubAuth}
+          />
 
-        <GoogleEventsCard
-          calendarEvents={calendarEvents}
-          showAddEvent={showAddEvent}
-          setShowAddEvent={setShowAddEvent}
-          fetchCalendar={fetchCalendar}
-        />
+          <GoogleEventsCard
+            calendarEvents={calendarEvents}
+            showAddEvent={showAddEvent}
+            setShowAddEvent={setShowAddEvent}
+            fetchCalendar={fetchCalendar}
+          />
 
-        {/* Add Event Modal */}
-        <AddEventModal
-          open={showAddEvent}
-          onClose={() => setShowAddEvent(false)}
-          onEventAdded={fetchCalendar} // Refresh events after adding
-        />
+          {/* Add Event Modal */}
+          <AddEventModal
+            open={showAddEvent}
+            onClose={() => setShowAddEvent(false)}
+            onEventAdded={fetchCalendar} // Refresh events after adding
+          />
         </div>
       </div>
     </main>
