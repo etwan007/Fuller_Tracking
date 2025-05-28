@@ -208,6 +208,14 @@ h2 {
   color: #222;
 }
 
+
+
+
+
+
+
+
+
 /* === FORM SUBMISSIONS TABLE === */
 
 .form-table {
@@ -259,6 +267,11 @@ h2 {
 
 
 
+
+
+
+
+
 /* === GITHUB REPO LIST === */
 
 
@@ -268,20 +281,26 @@ h2 {
   padding: 1em;
   background-color: #f9f9f9;
   text-justify: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1em; /* space between repo items */
 }
 
 
 .repo-list a {
-  display: block;
   padding: 1em;
   background: #dddddd; /* light gray background */
   text-decoration: none;
   border-radius: 1em;
   transition: background 0.2s, color 0.2s;
-}
+  color: #222; /* dark text color */
+  }
 
 .repo-list a:hover {
-  color: #e0e7ef;
+  background-color: #e0e7ef;
+  font-style: bold;
 }
 
 /* === GOOGLE CALENDAR VIEW === */
