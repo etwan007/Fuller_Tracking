@@ -15,7 +15,7 @@ export default function GitHubRepoList({ githubData, githubError, onLogin }) {
                 <a href={repo.html_url} target="_blank" rel="noreferrer">
                   {repo.name}
                 </a>
-                <a href={x-cellaviation.com}>X-Cell Aviation</a>
+                <a href="x-cellaviation.com">X-Cell Aviation</a>
               </li>
             ))
           ) : (
