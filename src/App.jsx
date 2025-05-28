@@ -207,7 +207,7 @@ export default function App() {
     fetchGitHubFiles(); // <-- Add this line
 
     // * Set up polling to refresh form responses every 10 seconds
-    const interval = setInterval(fetchFormResponses, fetchGitHubFiles, 10000);
+    const interval = setInterval(fetchFormResponses, fetchGitHubFiles, 100000);
     return () => clearInterval(interval); // * Cleanup on unmount
   }, [fetchCalendar, fetchFormResponses, fetchGitHubFiles]);
 
