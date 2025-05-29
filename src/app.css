@@ -220,11 +220,7 @@ h2 {
 
 /* Overall container for the form submissions component */
 .submissions-container {
-  
-  background-color: #ff0000; /* Matching your .container background */
-  border-radius: 1em; /* Matching your .container border-radius */
-  
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  flex-wrap: nowrap;
 }
 
 /* Header Row (using flexbox) */
