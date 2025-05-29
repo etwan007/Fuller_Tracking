@@ -55,6 +55,12 @@ export default function App() {
   }, []);
 
 
+    // Get username from the first repo (if available)
+  const githubUsername =
+    githubData?.files?.[0]?.owner?.login || null;
+
+
+
 
   // * Handles AI suggestion generation using the project name
   const handleAISuggestion = useCallback(async () => {
@@ -250,6 +256,7 @@ export default function App() {
           <GitHubRepoList
             githubData={githubData}
             githubError={githubError}
+            githubUsername={githubUsername}
             onLogin={handleGitHubAuth}
           />
 

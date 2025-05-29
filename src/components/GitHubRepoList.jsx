@@ -1,13 +1,13 @@
 import { Card, CardContent } from './Card';
 import { Button } from './Button';
 
-export default function GitHubRepoList({ githubData, githubError, onLogin }) {
+export default function GitHubRepoList({ githubData, githubError, githubUsername, onLogin }) {
   return (
     <Card className="container">
       <CardContent>
         <h2>
           <a
-            href={githubData?.files?.[0]?.owner?.login || null ? `https://github.com/${githubUsername}` : "https://github.com"}
+            href={githubUsername ? `https://github.com/${githubUsername}` : "https://github.com"}
             target="_blank"
             rel="noreferrer"
             style={{ color: "inherit", textDecoration: "none" }}
