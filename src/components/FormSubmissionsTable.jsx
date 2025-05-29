@@ -1,34 +1,45 @@
+import React from 'react';
+
+
 export default function FormSubmissionsTable({ formResponses }) {
+  // Determine headers: if formResponses[0] exists, use it, otherwise use defaults.
+  const headers = formResponses?.[0] || ['Time Submitted', 'Project Name', 'Description', 'Due Date'];
+
+  // Data rows start from the second element (index 1).
+  const dataRows = formResponses?.slice(1);
+
   return (
-    <div className="container">
+    <div className="submissions-container">
       <h2>Form Submissions</h2>
-      <table className="form-table">
-        <thead>
-          <tr>
-            {(formResponses?.[0] || ['Time Submitted', 'Project Name', 'Description', 'Due Date']).map((header, i) => (
-              <th key={i}>{header}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {formResponses?.slice(1).length > 0 ? (
-            formResponses.slice(1).map((row, i) => (
-              <tr className="form-submissions" key={i}>
-                
-                {row.map((cell, j) => (
-                  <td key={j}>{cell}</td>
-                ))}
-                
-              </tr>
-            ))
-          ) : (
-            <tr className="form-submissions">
-<td colSpan={4} className="form-table-placeholder">No submissions yet.</td>
-            </tr>
-            
-          )}
-        </tbody>
-      </table>
+
+      {/* Header Row (using flexbox) */}
+      <div className="submissions-header">
+        {headers.map((header, i) => (
+          <div key={i} className="header-item">
+            {header}
+          </div>
+        ))}
+      </div>
+
+      {/* Data Rows (each one is a distinct container) */}
+      <div className="submissions-body">
+        {dataRows && dataRows.length > 0 ? (
+          dataRows.map((row, i) => (
+            // This div is your "rectangle that encompasses the whole row"
+            <div key={i} className="submission-row-container">
+              {row.map((cell, j) => (
+                <div key={j} className="submission-cell">
+                  {cell}
+                </div>
+              ))}
+            </div>
+          ))
+        ) : (
+          <div className="no-submissions-message">
+            No submissions yet.
+          </div>
+        )}
+      </div>
     </div>
   );
 }
