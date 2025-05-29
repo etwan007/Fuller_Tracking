@@ -260,6 +260,7 @@ h2 {
   border-radius: 0.75em;
   overflow: hidden;
   border: 1px solid #e5e7eb;
+  display: block;
 }
 
 
