@@ -1,34 +1,36 @@
 export default function FormSubmissionsTable({ formResponses }) {
+  // Use fallback headers if none provided
+  const headers = formResponses?.[0] || [
+    'Time Submitted',
+    'Project Name',
+    'Description',
+    'Due Date'
+  ];
+  const rows = formResponses?.slice(1) || [];
+
   return (
     <div className="container">
       <h2>Form Submissions</h2>
-      <table className="form-table">
-        <thead>
-          <tr>
-            {(formResponses?.[0] || ['Time Submitted', 'Project Name', 'Description', 'Due Date']).map((header, i) => (
-              <th key={i}>{header}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {formResponses?.slice(1).length > 0 ? (
-            formResponses.slice(1).map((row, i) => (
-              <tr className="form-submissions" key={i}>
-                
-                {row.map((cell, j) => (
-                  <td key={j}>{cell || '\u00A0'}</td>
-                ))}
-                
-              </tr>
+      <div className="form-grid">
+        {/* Headers */}
+        {headers.map((header, i) => (
+          <div className="form-grid-header" key={i}>{header}</div>
+        ))}
+        {/* Rows */}
+        {rows.length > 0 ? (
+          rows.map((row, i) =>
+            row.map((cell, j) => (
+              <div className="form-grid-cell" key={`${i}-${j}`}>
+                {cell || '\u00A0'}
+              </div>
             ))
-          ) : (
-            <tr className="form-submissions">
-<td colSpan={4} className="form-table-placeholder">No submissions yet.</td>
-            </tr>
-            
-          )}
-        </tbody>
-      </table>
+          )
+        ) : (
+          <div className="form-grid-empty" style={{ gridColumn: `span ${headers.length}` }}>
+            No submissions yet.
+          </div>
+        )}
+      </div>
     </div>
   );
 }
