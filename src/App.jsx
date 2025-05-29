@@ -112,7 +112,7 @@ const handleSelectBullet = useCallback(async (bullet) => {
   name = name.replace(/[^a-zA-Z0-9._-]/g, "");
 
   // Remove leading/trailing dots or dashes
-  name = name.replace(/^[.-]+|[.-]+$/g, "");
+  name = name.replace(/^[.-_]+|[.-]+$/g, "");
 
   // Trim to 100 characters max
   if (name.length > 100) {
