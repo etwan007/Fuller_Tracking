@@ -279,20 +279,20 @@ h2 {
 .repo-list {
   list-style: none;
   border-radius: 1em;
-  padding: .5em;
+  padding: 1em;
   background-color: #f9f9f9;
   text-justify: center;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: left;
-  gap: 2em; /* space between repo items */
+  gap: 1em 1em; /* space between repo items */
   max-width: 900px;
 }
 
 
 .repo-list a {
-  padding: 1em;
+  padding: .5em;
   background: #dddddd; /* light gray background */
   text-decoration: none;
   border-radius: 1em;

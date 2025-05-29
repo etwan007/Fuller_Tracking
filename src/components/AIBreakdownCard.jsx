@@ -18,28 +18,25 @@ export default function AIBreakdownCard({
   return (
     <div className="container">
       
+      <h2>AI Breakdown</h2>
+
       {!breakdownToShow && (
-      <input
-        type="text"
-        placeholder="Enter Project Idea"
-        className="input"
-        value={projectName}
-        onChange={(e) => setProjectName(e.target.value)}
-      />
+        <input
+          type="text"
+          placeholder="Enter Project Idea"
+          className="input"
+          value={projectName}
+          onChange={(e) => setProjectName(e.target.value)}
+        />
       )}
 
-      
       {!breakdownToShow && (
-        
-          <Button onClick={handleAISuggestion}>Generate AI Breakdown</Button>
-        
+        <Button onClick={handleAISuggestion}>Generate AI Breakdown</Button>
       )}
 
-     
       {breakdownToShow && (
         <Card>
           <CardContent>
-            <h2>AI Breakdown</h2>
             <AILoader loading={loading} />
             <ul className="breakdown-list">
               {breakdownToShow
@@ -62,7 +59,6 @@ export default function AIBreakdownCard({
                 ))}
             </ul>
 
-            
             {selectedBullet && (
               <div className="selected-bullet-row">
                 <Button onClick={() => handleSelectBullet(selectedBullet)}>
@@ -71,8 +67,7 @@ export default function AIBreakdownCard({
               </div>
             )}
 
-                    
-              <div className="clarification-row">
+            <div className="clarification-row">
               <textarea
                 className="input"
                 placeholder="Add clarifications or modifications to your project idea..."
@@ -87,7 +82,7 @@ export default function AIBreakdownCard({
               >
                 Submit Clarification
               </Button>
-           </div>
+            </div>
           </CardContent>
         </Card>
       )}

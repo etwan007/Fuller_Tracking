@@ -68,14 +68,18 @@ export default function App() {
     setCurrentBreakdown(data.response); // * Update state with clarified/modified response
     setClarification(""); // * Clear clarification input
     setLoading(false); // * Clear loading state
-  }, [clarification, projectName, currentBreakdown]);
+  }, [clarification, projectdName, currentBreakdown]);
 
   // * Handles selecting a bullet and creating a repo with its project name
   const handleSelectBullet = useCallback(async (bullet) => {
     // Extract the project name (assume it's the first word or phrase before a colon or dash)
-    let name = bullet.split(":")[0].split("_")[0].trim();
-    // Remove special characters except spaces, dashes, and underscores
-    name = name.replace(/[^a-zA-Z0-9 _-]/g, "");
+    let name = bullet.split(":")[0].split("-")[0].trim();
+    // Remove leading dashes or colons
+    name = name.replace(/^[-:]+/, "").trim();
+    // Replace spaces with underscores and remove all dashes
+    name = name.replace(/\s+/g, "_").replace(/-/g, "");
+    // Remove special characters except underscores
+    name = name.replace(/[^a-zA-Z0-9_]/g, "");
     if (!name) name = bullet.trim();
     setProjectName(name); // * Update project name
 
@@ -92,7 +96,7 @@ export default function App() {
     } else {
       alert("Failed to create repo: " + (data.error || "Unknown error"));
     }
-  }, []);
+  }, [fetchGitHubFiles]);
 
   // * Initiates GitHub OAuth login flow
   const handleGitHubAuth = useCallback(async () => {
