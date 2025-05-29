@@ -220,7 +220,8 @@ h2 {
 
 /* Overall container for the form submissions component */
 .submissions-container {
-  flex-wrap: nowrap;
+  background-color: red;
+  padding: 1em;
 }
 
 /* Header Row (using flexbox) */
