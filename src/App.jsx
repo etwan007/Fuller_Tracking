@@ -171,15 +171,14 @@ export default function App() {
 
   // * Fetches Google Form responses from backend
   const fetchFormResponses = useCallback(async () => {
-    // Always use mock data in development for design purposes
     let url = "/api/google-form-responses";
-    if (process.env.NODE_ENV === "development") {
+    if (import.meta.env.MODE === "development") {
       url += "?mock=1";
     }
     const res = await fetch(url);
     if (res.ok) {
       const data = await res.json();
-      setFormResponses(data.values); // * Update state with form responses
+      setFormResponses(data.values);
     } else {
       alert("Failed to fetch form responses");
     }

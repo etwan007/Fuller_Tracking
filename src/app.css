@@ -257,7 +257,7 @@ h2 {
 /* Only the data rows get a border around the whole row */
 .form-table tbody tr {
   border: 1px solid #e5e7eb;
-  background-color: red;
+
   border-radius: 0.5em;
 }
 
@@ -266,7 +266,14 @@ h2 {
   background: none;
 }
 
-
+.form-submission-row {
+  padding: 0.5em;
+  border-radius: 0.5em;
+  background-color: #ff0000; /* light gray background */
+}
+.form-submission-row:hover {
+  background-color: #ffcccc; /* lighter gray on hover */
+}
 
 
 
@@ -304,6 +311,7 @@ h2 {
   background-color: #e0e7ef;
   font-style: bold;
 }
+
 
 
 
