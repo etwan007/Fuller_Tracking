@@ -216,6 +216,7 @@ export default function App() {
     const interval = setInterval(() => {
       fetchFormResponses();
       fetchGitHubFiles();
+      console.log(githubData.login);
     }, 60000); // 60,000 ms = 60 seconds
 
     return () => clearInterval(interval); // * Cleanup on unmount
