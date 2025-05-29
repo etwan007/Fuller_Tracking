@@ -3,7 +3,7 @@ import React from 'react';
 
 export default function FormSubmissionsTable({ formResponses }) {
   // Determine headers: if formResponses[0] exists, use it, otherwise use defaults.
-  const headers = formResponses?.[0] || ['Time Submitted', 'Project Name', 'Description', 'Due Date'];
+  const headers = formResponses?.[0] || ['Time Submitted', 'Description', 'Due Date'];
 
   // Data rows start from the second element (index 1).
   const dataRows = formResponses?.slice(1);
