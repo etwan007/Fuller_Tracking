@@ -2,7 +2,6 @@ export default function FormSubmissionsTable({ formResponses }) {
   // Use fallback headers if none provided
   const headers = formResponses?.[0] || [
     'Time Submitted',
-    'Project Name',
     'Description',
     'Due Date'
   ];
