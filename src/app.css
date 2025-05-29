@@ -216,62 +216,102 @@ h2 {
 
 
 
+/* === FORM SUBMISSIONS TABLE (Flexbox Version) === */
 
-/* === FORM SUBMISSIONS TABLE === */
-
-.form-table {
-  
-  padding: .3em;
-  
-  background: #ff0000;
-  border-radius: 1em;
-  border-collapse: separate;
-  border-spacing: 0em 0.5em; /* space between rows */
-  font-size: 1em;
+/* Overall container for the form submissions component */
+.submissions-container {
+  max-width: 90%; /* Using your existing .container max-width for consistency */
+  margin: 20px auto; /* Centering the table */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Using your body font */
+  background-color: #bbb; /* Matching your .container background */
+  border-radius: 1em; /* Matching your .container border-radius */
+  padding: 1rem; /* Matching your .container padding */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
-/* When the screen is 600px or less, make the font smaller */
-@media (max-width: 600px) {
-  .form-table {
-    font-size: 0.8em;
-  }
+/* Header Row (using flexbox) */
+.submissions-header {
+  display: flex; /* Makes header items align horizontally */
+  background-color: #c7c7c7; /* Matching your form-table thead th background */
+  padding: 0.8em 1.5em; /* Adjusted padding for better visual balance */
+  font-weight: bold;
+  color: #333; /* Darker text for headers */
+  border-radius: 1em; /* Rounded corners for the header bar */
+  margin-bottom: 0.8em; /* Space between header and first data row */
 }
 
-/* Header row: space out the titles */
-.form-table thead th {
-  background: #c7c7c7;
-  padding: .5em .5em; /* more horizontal padding for spacing */
-  border-top-left-radius: 1em;
-  border-top-right-radius: 1em;
+.header-item {
+  &:nth-child(1) { flex-basis: 30%; } ;
+  &:nth-child(2) { flex-basis: 50%; } ;
+  &:nth-child(3) { flex-basis: 20%; } ;
+}
+
+
+/* Data Rows Container */
+.submissions-body {
+  /* No specific styling needed here, it just holds the individual rows */
+  display: flex;
+  flex-direction: column; /* Stack rows vertically */
+  gap: 0.8em; /* Space between each row container */
+}
+
+/* This is the key: your "rectangle" container for each row */
+.submission-row-container {
+  display: flex; /* Makes the cells within the row align horizontally */
+  align-items: flex-start; /* Aligns content to the top within each row */
+  background-color: #f9f9f9; /* Default background for each row - a light, clean look */
+  padding: 1.2em 1.5em; /* Padding inside the row container */
+  border-radius: 0.75em; /* Rounded corners for the container (matching .card) */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); /* Subtle shadow for depth */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.submission-row-container:hover {
+  background-color: #f0f0f0; /* Lighter background on hover */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12); /* More prominent shadow on hover */
+  transform: translateY(-2px); /* Slight lift on hover */
+}
+
+.submission-cell {
+  
+  /* Specific flex-basis for columns if you need fixed widths (adjust percentages based on your data) */
+  /* These should align with the .header-item widths */
+  
+  &:nth-child(1) { flex-basis: 30%; } ;
+  &:nth-child(2) { flex-basis: 50%; } ;
+  &:nth-child(3) { flex-basis: 20%; } ;
+  
+}
+
+/* Placeholder for no submissions */
+.no-submissions-message {
   text-align: center;
-
-}
-
-/* Remove background from td so tr's background shows through */
-.form-table td {
-  background: none;
-  border-radius: 0;
-  padding: 0.5em 1em;
-}
-
-/* Only the data rows get a border around the whole row */
-.form-table tbody tr {
-  background-color: #ff0000;
+  padding: 30px;
+  color: #888; /* Matching your .placeholder color */
+  font-style: italic;
+  background-color: #f9f9f9;
   border-radius: 0.75em;
-  overflow: hidden;
-  border: 1px solid #e5e7eb;
-
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
+/* Media query for smaller screens */
+@media (max-width: 600px) {
+  .submissions-container {
+    padding: 0.8rem; /* Smaller padding on small screens */
+  }
 
+  .submissions-header,
+  .submission-row-container {
+    padding: 0.6em 1em; /* Smaller padding for header and rows */
+    font-size: 0.9em; /* Slightly smaller font for readability */
+  }
 
-.form-submissions {
-  padding: 0.5em;
-  border-radius: 0.5em;
-  
-}
-.form-submissions:hover {
-  background-color: #ffcccc; /* lighter gray on hover */
+  .header-item,
+  .submission-cell {
+    /* Consider adjusting flex-basis for mobile if columns become too squished */
+    /* Or even stacking them vertically for very small screens if desired */
+    /* flex-basis: auto; */
+  }
 }
 
 
@@ -448,40 +488,5 @@ h2 {
 .ai-breakdown-card {
   flex: 1 1 350px;      /* grow, shrink, basis */
   
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Adjust if you have more/less columns */
-  gap: 0.5em;
-  margin-top: 1em;
-}
-
-.form-grid-header {
-  background: #c7c7c7;
-  font-weight: bold;
-  text-align: center;
-  padding: 0.75em 0.5em;
-  border-radius: 0.75em 0.75em 0 0;
-}
-
-.form-grid-cell {
-  background: #ff0000;
-  color: #222;
-  padding: 0.75em 0.5em;
-  border-radius: 0.5em;
-  text-align: left;
-  min-height: 2.5em;
-  display: flex;
-  align-items: center;
-}
-
-.form-grid-empty {
-  background: #eee;
-  color: #888;
-  text-align: center;
-  padding: 1.5em 0;
-  border-radius: 0.5em;
-  grid-column: span 4;
 }
 

@@ -1,31 +1,41 @@
+import React from 'react';
+
+
 export default function FormSubmissionsTable({ formResponses }) {
-  // Use fallback headers if none provided
-  const headers = formResponses?.[0] || [
-    'Time Submitted',
-    'Description',
-    'Due Date'
-  ];
-  const rows = formResponses?.slice(1) || [];
+  // Determine headers: if formResponses[0] exists, use it, otherwise use defaults.
+  const headers = formResponses?.[0] || ['Time Submitted', 'Description', 'Due Date'];
+
+  // Data rows start from the second element (index 1).
+  const dataRows = formResponses?.slice(1);
 
   return (
     <div className="container">
       <h2>Form Submissions</h2>
-      <div className="form-grid">
-        {/* Headers */}
+
+      {/* Header Row (using flexbox) */}
+      <div className="submissions-header">
         {headers.map((header, i) => (
-          <div className="form-grid-header" key={i}>{header}</div>
+          <div key={i} className="header-item">
+            {header}
+          </div>
         ))}
-        {/* Rows */}
-        {rows.length > 0 ? (
-          rows.map((row, i) =>
-            row.map((cell, j) => (
-              <div className="form-grid-cell" key={`${i}-${j}`}>
-                {cell || '\u00A0'}
-              </div>
-            ))
-          )
+      </div>
+
+      {/* Data Rows (each one is a distinct container) */}
+      <div className="submissions-body">
+        {dataRows && dataRows.length > 0 ? (
+          dataRows.map((row, i) => (
+            // This div is your "rectangle that encompasses the whole row"
+            <div key={i} className="submission-row-container">
+              {row.map((cell, j) => (
+                <div key={j} className="submission-cell">
+                  {cell}
+                </div>
+              ))}
+            </div>
+          ))
         ) : (
-          <div className="form-grid-empty" style={{ gridColumn: `span ${headers.length}` }}>
+          <div className="no-submissions-message">
             No submissions yet.
           </div>
         )}
