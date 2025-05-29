@@ -53,7 +53,7 @@ h2 {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  background-color: #ff0000;
+  background-color: #bbb;
   justify-content: center;
   padding: 1rem;
   max-width: 90%;
@@ -220,7 +220,7 @@ h2 {
 
 /* Overall container for the form submissions component */
 .submissions-container {
-  background-color: red;
+  background-color: #bbb;
   padding: 1em;
   border-radius: 1em;
   max-width: 90%;
@@ -231,18 +231,20 @@ h2 {
 .submissions-header {
   display: flex; /* Makes header items align horizontally */
   text-align: center;
-  gap: 0 1em;
 }
 
 .header-item {
   background-color: #c7c7c7;
   border-top-left-radius: 1em;
   border-top-right-radius: 1em;
-  padding: 1em;
+  padding: .5em;
+  flex-basis: 0;
+  flex-grow: 1;
+  margin-right: 1em; /* Add gap between items */
+}
 
-  &:nth-child(1) { flex-basis: 30%; } ;
-  &:nth-child(2) { flex-basis: 50%; } ;
-  &:nth-child(3) { flex-basis: 20%; } ;
+.header-item:last-child {
+  margin-right: 0; /* No margin on the last item */
 }
 
 
@@ -273,14 +275,8 @@ h2 {
 }
 
 .submission-cell {
-  
-  /* Specific flex-basis for columns if you need fixed widths (adjust percentages based on your data) */
-  /* These should align with the .header-item widths */
-  
-  &:nth-child(1) { flex-basis: 30%; } ;
-  &:nth-child(2) { flex-basis: 50%; } ;
-  &:nth-child(3) { flex-basis: 20%; } ;
-  
+  flex-basis: 0;
+  flex-grow: 1;
 }
 
 /* Placeholder for no submissions */
