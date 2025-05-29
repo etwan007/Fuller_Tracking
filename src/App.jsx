@@ -108,18 +108,16 @@ const handleSelectBullet = useCallback(async (bullet) => {
   // Replace spaces with underscores
   name = name.replace(/\s+/g, "_");
 
-  // Keep only valid GitHub repo name characters
+  // Keep only valid GitHub characters
   name = name.replace(/[^a-zA-Z0-9._-]/g, "");
 
-  // Remove leading/trailing dots or dashes
-  name = name.replace(/^[.-_]+|[.-]+$/g, "");
+  // Remove leading/trailing dots, dashes, or underscores
+  name = name.replace(/^[._-]+|[._-]+$/g, "");
 
-  // Trim to 100 characters max
-  if (name.length > 100) {
-    name = name.substring(0, 100);
-  }
+  // Limit length to 100 characters
+  name = name.substring(0, 100);
 
-  // Fallback if name is now empty
+  // Fallback if the name becomes empty
   if (!name) {
     name = "new_repository";
   }
