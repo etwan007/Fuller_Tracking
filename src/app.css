@@ -261,10 +261,7 @@ h2 {
   border: 1px solid #e5e7eb;
 }
 
-/* Remove background from th in .form-table th, .form-table td rule if present */
-.form-table th {
-  background: none;
-}
+
 
 .form-submissions {
   padding: 0.5em;
