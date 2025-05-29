@@ -220,12 +220,10 @@ h2 {
 
 /* Overall container for the form submissions component */
 .submissions-container {
-  max-width: 90%; /* Using your existing .container max-width for consistency */
-  margin: 20px auto; /* Centering the table */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Using your body font */
-  background-color: #bbb; /* Matching your .container background */
+  
+  background-color: #ff0000; /* Matching your .container background */
   border-radius: 1em; /* Matching your .container border-radius */
-  padding: 1rem; /* Matching your .container padding */
+  
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
