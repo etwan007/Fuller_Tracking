@@ -258,7 +258,8 @@ h2 {
 .form-table tbody tr {
   border: 1px solid #e5e7eb;
   background-color: #ff0000;
-  border-radius: 0.5em;
+  border-radius: 0.75em;
+  overflow: hidden; /* Ensures corners are rounded */
 }
 
 /* Remove background from th in .form-table th, .form-table td rule if present */

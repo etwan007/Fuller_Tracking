@@ -5,7 +5,16 @@ export default function GitHubRepoList({ githubData, githubError, onLogin }) {
   return (
     <Card className="container">
       <CardContent>
-        <h2>GitHub Repositories:</h2>
+        <h2>
+          <a
+            href={githubData?.files?.[0]?.owner?.login || null ? `https://github.com/${githubUsername}` : "https://github.com"}
+            target="_blank"
+            rel="noreferrer"
+            style={{ color: "inherit", textDecoration: "none" }}
+          >
+            GitHub Repositories
+          </a>
+        </h2>
         <ul className="repo-list">
           {githubError ? (
             <li>{githubError}</li>
