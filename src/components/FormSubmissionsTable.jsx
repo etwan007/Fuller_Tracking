@@ -14,11 +14,11 @@ export default function FormSubmissionsTable({ formResponses }) {
           {formResponses?.slice(1).length > 0 ? (
             formResponses.slice(1).map((row, i) => (
               <tr className="form-submissions" key={i}>
-                <section className="form-submission-row">
+                
                 {row.map((cell, j) => (
                   <td key={j}>{cell}</td>
                 ))}
-                </section>
+                
               </tr>
             ))
           ) : (
