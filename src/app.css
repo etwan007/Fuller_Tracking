@@ -222,6 +222,9 @@ h2 {
 .submissions-container {
   background-color: red;
   padding: 1em;
+  border-radius: 1em;
+  max-width: 90%;
+  min-width: 40%;
 }
 
 /* Header Row (using flexbox) */
