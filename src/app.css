@@ -226,7 +226,7 @@ h2 {
   background: #f9f9f9;
   border-radius: 1em;
   border-collapse: separate;
-  border-spacing: .5em 0.5em; /* space between rows */
+  border-spacing: 0em 0.5em; /* space between rows */
   font-size: 1em;
 }
 
@@ -260,7 +260,7 @@ h2 {
   border-radius: 0.75em;
   overflow: hidden;
   border: 1px solid #e5e7eb;
-  display: block;
+
 }
 
 
