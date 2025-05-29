@@ -103,13 +103,7 @@ export default function App() {
 
   // * Handles selecting a bullet and creating a repo with its project name
 const handleSelectBullet = useCallback(async (bullet) => {
-  let name = bullet.trim();
-
-  // Extract before first colon or dash
-  const separatorMatch = name.match(/^[^-:]+/);
-  if (separatorMatch) {
-    name = separatorMatch[0].trim();
-  }
+  let name = bullet.split(":")[0].trim(); // Take only part before the colon
 
   // Replace spaces with underscores
   name = name.replace(/\s+/g, "_");
