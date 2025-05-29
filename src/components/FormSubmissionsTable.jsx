@@ -9,7 +9,7 @@ export default function FormSubmissionsTable({ formResponses }) {
   const dataRows = formResponses?.slice(1);
 
   return (
-    <div className="container submissions-container">
+    <div className="submissions-container">
       <h2>Form Submissions</h2>
 
       {/* Header Row (using flexbox) */}
