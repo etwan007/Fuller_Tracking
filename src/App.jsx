@@ -31,6 +31,31 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [showAddEvent, setShowAddEvent] = useState(false);
 
+  // * Fetches the user's GitHub repositories from backend
+  const fetchGitHubFiles = useCallback(async () => {
+    try {
+      const res = await fetch("/api/github-files");
+      if (!res.ok) {
+        if (res.status === 401) {
+          setGithubData(null);
+          setGithubError("Please log in to see Repositories");
+        } else {
+          setGithubData(null);
+          setGithubError("Failed to fetch repositories");
+        }
+        return;
+      }
+      const data = await res.json();
+      setGithubData(data);
+      setGithubError(null);
+    } catch (err) {
+      setGithubData(null);
+      setGithubError("A network error occurred");
+    }
+  }, []);
+
+
+
   // * Handles AI suggestion generation using the project name
   const handleAISuggestion = useCallback(async () => {
     if (!projectName.trim()) return;
@@ -68,7 +93,7 @@ export default function App() {
     setCurrentBreakdown(data.response); // * Update state with clarified/modified response
     setClarification(""); // * Clear clarification input
     setLoading(false); // * Clear loading state
-  }, [clarification, projectdName, currentBreakdown]);
+  }, [clarification, projectName, currentBreakdown]);
 
   // * Handles selecting a bullet and creating a repo with its project name
   const handleSelectBullet = useCallback(async (bullet) => {
@@ -107,29 +132,7 @@ export default function App() {
     }
   }, []);
 
-  // * Fetches the user's GitHub repositories from backend
-  const fetchGitHubFiles = useCallback(async () => {
-    try {
-      const res = await fetch("/api/github-files");
-      if (!res.ok) {
-        if (res.status === 401) {
-          setGithubData(null);
-          setGithubError("Please log in to see Repositories");
-        } else {
-          setGithubData(null);
-          setGithubError("Failed to fetch repositories");
-        }
-        return;
-      }
-      const data = await res.json();
-      setGithubData(data);
-      setGithubError(null);
-    } catch (err) {
-      setGithubData(null);
-      setGithubError("A network error occurred");
-    }
-  }, []);
-
+  
   // * Creates a new GitHub repository with the given project name
   const createGitHubRepo = useCallback(async () => {
     if (!projectName.trim()) return alert("Enter a project name first.");
