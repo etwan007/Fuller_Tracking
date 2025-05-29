@@ -16,7 +16,7 @@ export default function FormSubmissionsTable({ formResponses }) {
               <tr className="form-submissions" key={i}>
                 
                 {row.map((cell, j) => (
-                  <td key={j}>{cell}</td>
+                  <td key={j}>{cell || '\u00A0'}</td>
                 ))}
                 
               </tr>

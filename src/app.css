@@ -247,15 +247,16 @@ h2 {
 
 }
 
-/* Remove border-radius from all td for a unified look */
+/* Remove background from td so tr's background shows through */
 .form-table td {
-  background-color: #ff0000;
+  background: none;
   border-radius: 0;
   padding: 0.5em 1em;
 }
 
 /* Only the data rows get a border around the whole row */
 .form-table tbody tr {
+  background-color: #ff0000;
   border-radius: 0.75em;
   overflow: hidden;
   border: 1px solid #e5e7eb;
