@@ -133,7 +133,7 @@ h2 {
   padding: 1em;
   background-color: none;
  
-  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+  
 
 }
 
@@ -318,6 +318,7 @@ h2 {
 }
 
 .submission-row-container:hover {
+  cursor: pointer;
   background-color: #f0f0f0; /* Lighter background on hover */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12); /* More prominent shadow on hover */
   transform: translateY(-2px); /* Slight lift on hover */
@@ -390,10 +391,11 @@ h2 {
   transition: all 0.3s ease;
   color: #222; /* dark text color */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
   }
 
 .repo-list a:hover {
-  background-color: #0f0909; /* Lighter background on hover */
+  background-color: #f0f0f0; /* Lighter background on hover */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12); /* More prominent shadow on hover */
   transform: translateY(-2px); /* Slight lift on hover */
 }
