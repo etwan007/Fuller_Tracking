@@ -231,21 +231,48 @@ h2 {
 .submissions-header {
   display: flex;
   text-align: center;
-  gap: 1em; /* This creates the visual gap for both header and data rows */
+}
+
+.header-item {
+  flex-basis: 0;
+  flex-grow: 1;
+  display: flex;
+  margin-right: 1em;
+}
+.header-item:last-child {
+  margin-right: 0;
 }
 
 .header-item-bg {
   background-color: #c7c7c7;
   border-top-left-radius: 1em;
   border-top-right-radius: 1em;
-  padding: .5em;
+  padding: .5em .5em 0 .5em;
   width: 100%;
   height: 100%;
 }
-.header-item {
+
+.submission-row-container {
+  display: flex;
+  align-items: flex-start;
+  background: none;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
+  transition: all 0.3s ease;
+}
+
+.submission-cell {
   flex-basis: 0;
   flex-grow: 1;
-  display: flex;
+  background: #f9f9f9;
+  border-radius: 1em;
+  margin-right: 1em;
+  padding: 1em;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
+.submission-cell:last-child {
+  margin-right: 0;
 }
 
 /* Data Rows Container */
@@ -262,8 +289,8 @@ h2 {
   display: flex; /* Makes the cells within the row align horizontally */
   align-items: flex-start; /* Aligns content to the top within each row */
   background-color: #f9f9f9; /* Default background for each row - a light, clean look */
-  padding: 1.2em 1.5em; /* Padding inside the row container */
-  border-radius: 0.75em; /* Rounded corners for the container (matching .card) */
+  padding: 1; /* Padding inside the row container */
+  border-radius: 1em; /* Rounded corners for the container (matching .card) */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); /* Subtle shadow for depth */
   transition: all 0.3s ease; /* Smooth transition for hover effects */
 }

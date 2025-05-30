@@ -22,7 +22,7 @@ export default function FormSubmissionsTable({ formResponses }) {
       <div className="submissions-body">
         {dataRows.length > 0 ? (
           dataRows.map((row, i) => (
-            <div key={i} className="submission-row-container" style={{ display: 'flex', gap: '1em' }}>
+            <div key={i} className="submission-row-container">
               {padRow(row).map((cell, j) => (
                 <div key={j} className="submission-cell">
                   {cell}
