@@ -12,7 +12,7 @@ export default function GoogleEventsCard({
   return (
     <Card className="container">
       <CardContent>
-        <h2 className="section-title">Google Calendar:</h2>
+        <h2>Google Calendar:</h2>
         {!calendarEvents ? (
           <GoogleLogin />
         ) : calendarEvents.length > 0 ? (

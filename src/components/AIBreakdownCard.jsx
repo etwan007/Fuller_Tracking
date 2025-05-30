@@ -61,7 +61,7 @@ export default function AIBreakdownCard({
 
             {selectedBullet && (
               <div className="selected-bullet-row">
-                <Button onClick={() => handleSelectBullet(selectedBullet)}>
+                <Button className="button" onClick={() => handleSelectBullet(selectedBullet)}>
                   Make Repo from This
                 </Button>
               </div>
