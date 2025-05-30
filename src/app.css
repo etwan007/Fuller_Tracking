@@ -3,6 +3,7 @@ body {
   background: #212121;
   color: #222;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  letter-spacing: 0.5px;
   margin: 0;
   padding: 0;
 }
@@ -58,6 +59,7 @@ h2 {
   padding: 1rem;
   max-width: 90%;
   border-radius: 1em;
+  
 }
 
 .placeholder {
@@ -77,11 +79,15 @@ h2 {
   margin-top: 1em;
   cursor: pointer;
   display: block;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
 }
 
 .button:hover,
 .button:focus {
-  background: #1d4ed8;          /* hover:bg-blue-700 */
+  background-color: #3a77fa; /* Lighter background on hover */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12); /* More prominent shadow on hover */
+  transform: translateY(-2px); /* Slight lift on hover */          /* hover:bg-blue-700 */
 }
 
 /* === APP.JSX === */
@@ -121,6 +127,8 @@ h2 {
   padding: 1em;
   background-color: #f9f9f9;
   margin: 1em, 0, 0, 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+
 }
 
 .breakdown-item {
@@ -128,12 +136,15 @@ h2 {
   border-radius: 1em;
   padding: 0.5em 0.5em;
   margin-bottom: 0.25em;
-  background: #dddddd;
-  transition: background 0.2s;
+  background: #f0f0f0;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
 }
 
 .breakdown-item:hover {
-  background: #e0e7ef;
+  background-color: #3a77fa; /* Lighter background on hover */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12); /* More prominent shadow on hover */
+  transform: translateY(-2px); /* Slight lift on hover */
 }
 
 .breakdown-item-selected {
@@ -177,6 +188,7 @@ h2 {
   resize: vertical;
   box-sizing: border-box;
   margin-top: 1em;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
 }
 
 .calendar-card {
@@ -203,6 +215,7 @@ h2 {
   padding: 1.2em;
   background: #fff;
   margin-bottom: 1.5em;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
 }
 
 .card-content {
@@ -231,6 +244,7 @@ h2 {
 .submissions-header {
   display: flex;
   text-align: center;
+  margin-top: 1em;
 }
 
 .header-item {
@@ -238,6 +252,8 @@ h2 {
   flex-grow: 1;
   display: flex;
   margin-right: 1em;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
 }
 .header-item:last-child {
   margin-right: 0;
@@ -265,8 +281,6 @@ h2 {
 .submission-cell {
   flex-basis: 0;
   flex-grow: 1;
-  background: #f9f9f9;
-  border-radius: 1em;
   margin-right: 1em;
   padding: 1em;
   box-shadow: 0 2px 5px rgba(0,0,0,0.08);
@@ -282,6 +296,7 @@ h2 {
   flex-direction: column; /* Stack rows vertically */
   gap: .5em 0; /* Space between each row container */
   margin-top: 1em;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
 }
 
 /* This is the key: your "rectangle" container for each row */
@@ -309,11 +324,11 @@ h2 {
 /* Placeholder for no submissions */
 .no-submissions-message {
   text-align: center;
-  padding: 30px;
+  padding: 1em;
   color: #888; /* Matching your .placeholder color */
   font-style: italic;
   background-color: #f9f9f9;
-  border-radius: 0.75em;
+  border-radius: 1em;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
@@ -362,16 +377,17 @@ h2 {
 
 .repo-list a {
   padding: .5em;
-  background: #dddddd; /* light gray background */
+  background: #f9f9f9; /* light gray background */
   text-decoration: none;
   border-radius: 1em;
-  transition: background 0.2s, color 0.2s;
+  transition: all 0.3s ease;
   color: #222; /* dark text color */
   }
 
 .repo-list a:hover {
-  background-color: #e0e7ef;
-  font-style: bold;
+  background-color: #f0f0f0; /* Lighter background on hover */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12); /* More prominent shadow on hover */
+  transform: translateY(-2px); /* Slight lift on hover */
 }
 
 

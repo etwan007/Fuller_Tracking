@@ -31,7 +31,7 @@ export default function AIBreakdownCard({
       )}
 
       {!breakdownToShow && (
-        <Button onClick={handleAISuggestion}>Generate AI Breakdown</Button>
+        <Button className="button" onClick={handleAISuggestion}>Generate AI Breakdown</Button>
       )}
 
       {breakdownToShow && (
