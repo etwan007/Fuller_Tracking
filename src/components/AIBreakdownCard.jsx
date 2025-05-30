@@ -16,7 +16,7 @@ export default function AIBreakdownCard({
   handleSelectBullet,
 }) {
   return (
-    <div className="container">
+    <div className="container ai-breakdown-card">
       
       <h2>AI Breakdown</h2>
 
