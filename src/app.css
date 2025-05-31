@@ -114,7 +114,33 @@ h2 {
 
 
 
+ /* === Task SECTION === */
 
+.task-inputs {
+  display: flex;
+  flex-direction: row;
+  gap: 1em; /* space between input fields */
+  
+}
+
+.input .num-selector {
+  width: auto;
+  background-color: red;
+}
+
+.submissions-header.task-header {
+  background-color: red;
+  
+  &:nth-child(1) {
+    flex-basis: 50%;
+  }
+  &:nth-child(2) {
+    flex-basis: 20%;
+  }
+  &:nth-child(3) {
+    flex-basis: 30%;
+  }
+}
 
 
 

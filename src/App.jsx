@@ -10,6 +10,7 @@ import AILoader from "./components/AILoader";
 import AddEventModal from "./components/AddEventModal";
 import AIBreakdownCard from "./components/AIBreakdownCard";
 import GoogleEventsCard from "./components/GoogleEventsCard";
+import TaskTable from "./components/TaskTable";
 import "./app.css";
 
 // ! Main App component
@@ -24,6 +25,9 @@ export default function App() {
   const [githubError, setGithubError] = useState(null);
   const [calendarEvents, setCalendarEvents] = useState(null);
   const [formResponses, setFormResponses] = useState(null);
+  const [Tasks, setTasks] = useState(null);
+
+
 
   // * State for clarification/modification and bullet selection
   const [clarification, setClarification] = useState("");
@@ -31,6 +35,10 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [showAddEvent, setShowAddEvent] = useState(false);
 
+  
+  
+  
+  
   // * Fetches the user's GitHub repositories from backend
   const fetchGitHubFiles = useCallback(async () => {
     try {
@@ -55,7 +63,8 @@ export default function App() {
   }, []);
 
 
-    // Get username from the first repo (if available)
+    
+  // Get username from the first repo (if available)
   const githubUsername =
     githubData?.files?.[0]?.owner?.login || null;
 
@@ -82,6 +91,8 @@ export default function App() {
     setLoading(false); // * Clear loading state
   }, [projectName]);
 
+
+
   // * Handles clarification/modification requests
   const handleClarification = useCallback(async () => {
     if (!clarification.trim()) return; // ? Guard: Don't run if clarification is empty
@@ -100,6 +111,8 @@ export default function App() {
     setClarification(""); // * Clear clarification input
     setLoading(false); // * Clear loading state
   }, [clarification, projectName, currentBreakdown]);
+
+
 
   // * Handles selecting a bullet and creating a repo with its project name
 const handleSelectBullet = useCallback(async (bullet) => {
@@ -140,6 +153,8 @@ const handleSelectBullet = useCallback(async (bullet) => {
     }
   }, [fetchGitHubFiles]);
 
+
+
   // * Initiates GitHub OAuth login flow
   const handleGitHubAuth = useCallback(async () => {
     const res = await fetch("/api/github-login");
@@ -149,23 +164,7 @@ const handleSelectBullet = useCallback(async (bullet) => {
     }
   }, []);
 
-  
-  // * Creates a new GitHub repository with the given project name
-  const createGitHubRepo = useCallback(async () => {
-    if (!projectName.trim()) return alert("Enter a project name first.");
-    const res = await fetch("/api/github-create-repo", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: projectName }),
-    });
-    const data = await res.json();
-    if (data.success) {
-      alert("GitHub repository created!");
-      fetchGitHubFiles(); // * Refresh repo list
-    } else {
-      alert("Failed to create repo: " + (data.error || "Unknown error"));
-    }
-  }, [projectName, fetchGitHubFiles]);
+
 
   // * Fetches Google Calendar events using the stored access token
   const fetchCalendar = useCallback(async () => {
@@ -186,6 +185,8 @@ const handleSelectBullet = useCallback(async (bullet) => {
     }
   }, []);
 
+
+
   // * Fetches Google Form responses from backend
   const fetchFormResponses = useCallback(async () => {
     let url = "/api/google-form-responses";
@@ -200,6 +201,8 @@ const handleSelectBullet = useCallback(async (bullet) => {
       alert("Failed to fetch form responses");
     }
   }, []);
+
+
 
   // --- Effects ---
   useEffect(() => {
@@ -234,12 +237,16 @@ const handleSelectBullet = useCallback(async (bullet) => {
       fetchFormResponses();
       fetchGitHubFiles();
       console.log(githubData.login);
-    }, 60000); // 60,000 ms = 60 seconds
+    }, 60000); // 60,000 ms = 60 secondsd
 
     return () => clearInterval(interval); // * Cleanup on unmount
   }, [fetchCalendar, fetchFormResponses, fetchGitHubFiles]);
 
+
+
   const breakdownToShow = currentBreakdown || aiSuggestion;
+
+
 
   // --- Render ---
   return (
@@ -247,7 +254,11 @@ const handleSelectBullet = useCallback(async (bullet) => {
       <h1 className="main-title">Fuller Tracking</h1>
       <div className="main-container">
         <div className="row1-container">
+          <TaskTable/>
+          
           <FormSubmissionsTable formResponses={formResponses} />
+        </div>
+        <div className="row2-container">
 
           <AIBreakdownCard
             projectName={projectName}
@@ -262,8 +273,7 @@ const handleSelectBullet = useCallback(async (bullet) => {
             handleClarification={handleClarification}
             handleSelectBullet={handleSelectBullet}
           />
-        </div>
-        <div className="row2-container">
+
           <GitHubRepoList
             githubData={githubData}
             githubError={githubError}
