@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { auth, provider, signInWithPopup, signOut, db } from "../firebase";
 import { collection, addDoc, getDocs, query, where, onSnapshot } from "firebase/firestore";
@@ -18,7 +17,16 @@ export default function TaskTable() {
 
   // Store task, priority, and due date in Firestore
   const handleAddTask = async () => {
-    if (TaskName && DueDate && user) {
+    console.log("handleAddTask called", { user, TaskName, DueDate });
+    if (!user) {
+      alert("You must be signed in to add a task.");
+      return;
+    }
+    if (!TaskName || !DueDate) {
+      alert("Please enter a task name and due date.");
+      return;
+    }
+    try {
       await addDoc(collection(db, "tasks"), {
         uid: user.uid,
         task: TaskName,
@@ -29,6 +37,8 @@ export default function TaskTable() {
       setTaskName('');
       setPriority(1);
       setDueDate('');
+    } catch (err) {
+      alert("Failed to add task: " + err.message);
     }
   };
 
@@ -59,6 +69,11 @@ export default function TaskTable() {
   return (
     <div className="submissions-container task">
       <h2>Tasks</h2>
+      {!user && (
+        <button onClick={() => signInWithPopup(auth, provider)}>
+          Sign in with Google
+        </button>
+      )}
       <div className="task-inputs">
         <input
           type="text"
