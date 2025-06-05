@@ -1,6 +1,7 @@
 
-import { useState } from 'react';
-
+import { useState, useEffect } from 'react';
+import { auth, provider, signInWithPopup, signOut, db } from "../firebase";
+import { collection, addDoc, getDocs, query, where, onSnapshot } from "firebase/firestore";
 
 export default function TaskTable() {
   const headers = ['Task', 'Priority', 'Due Date'];
@@ -8,24 +9,52 @@ export default function TaskTable() {
   const [TaskName, setTaskName] = useState('');
   const [Priority, setPriority] = useState(1);
   const [DueDate, setDueDate] = useState('');
+  const [user, setUser] = useState(null);
+  const [tasks, setTasks] = useState([]);
 
   // Ensure each row has the same number of cells as headers
   const padRow = (row) =>
     Array.from({ length: headers.length }, (_, i) => row?.[i] ?? '');
 
-  const handleAddTask = () => {
-    if (TaskName && DueDate) {
-      setTaskResponses([
-        ...TaskResponses,
-        [TaskName, Priority, DueDate]
-      ]);
+  // Store task, priority, and due date in Firestore
+  const handleAddTask = async () => {
+    if (TaskName && DueDate && user) {
+      await addDoc(collection(db, "tasks"), {
+        uid: user.uid,
+        task: TaskName,
+        priority: Priority,
+        dueDate: DueDate,
+        created: Date.now(),
+      });
       setTaskName('');
       setPriority(1);
       setDueDate('');
     }
   };
 
-  const dataRows = TaskResponses.slice(1);
+  useEffect(() => {
+    const unsub = auth.onAuthStateChanged((u) => setUser(u));
+    return () => unsub();
+  }, []);
+
+  useEffect(() => {
+    
+    if (!user) {
+      setTasks([]);
+      return;
+    }
+    // Real-time updates
+    const q = query(collection(db, "tasks"), where("uid", "==", user.uid));
+    const unsub = onSnapshot(q, (snapshot) => {
+      setTasks(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+    return () => unsub();
+  }, [user]);
+
+
+
+// Prepare rows for display
+  const dataRows = tasks.map(t => [t.task, t.priority, t.dueDate]);
 
   return (
     <div className="submissions-container task">

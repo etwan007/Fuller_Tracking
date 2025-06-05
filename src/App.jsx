@@ -252,6 +252,7 @@ const handleSelectBullet = useCallback(async (bullet) => {
   return (
     <main>
       <h1 className="main-title">Fuller Tracking</h1>
+      <GoogleLogin/>
       <div className="main-container">
         <div className="row1-container">
           <TaskTable/>
