@@ -12,7 +12,7 @@ import AIBreakdownCard from "./components/AIBreakdownCard";
 import GoogleEventsCard from "./components/GoogleEventsCard";
 import TaskTable from "./components/TaskTable";
 import "./app.css";
-import { firebaseSignInWithGoogleAccessToken } from "./path/to/above/function";
+import { firebaseSignInWithGoogleAccessToken } from "./utils/firebaseSignIn";
 
 
 // ! Main App component
@@ -226,6 +226,7 @@ const handleSelectBullet = useCallback(async (bullet) => {
        firebaseSignInWithGoogleAccessToken(token)
       .then(() => {
         // Optionally, clean up the URL
+
         window.history.replaceState({}, document.title, window.location.pathname);
       })
       .catch((err) => {
