@@ -12,6 +12,8 @@ import AIBreakdownCard from "./components/AIBreakdownCard";
 import GoogleEventsCard from "./components/GoogleEventsCard";
 import TaskTable from "./components/TaskTable";
 import "./app.css";
+import { firebaseSignInWithGoogleAccessToken } from "./path/to/above/function";
+
 
 // ! Main App component
 export default function App() {
@@ -220,6 +222,15 @@ const handleSelectBullet = useCallback(async (bullet) => {
           window.location.pathname
         );
       }, 100);
+
+       firebaseSignInWithGoogleAccessToken(token)
+      .then(() => {
+        // Optionally, clean up the URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      })
+      .catch((err) => {
+        alert("Firebase sign-in failed: " + err.message);
+      });
 
       // * Fetch calendar events after login
       fetchCalendar();

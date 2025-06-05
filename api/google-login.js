@@ -1,3 +1,15 @@
+
+
+// Add this import in your component or a utility file
+import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
+import { auth } from "../firebase";
+
+// Call this function after you get the Google access token
+async function firebaseSignInWithGoogleAccessToken(accessToken) {
+  const credential = GoogleAuthProvider.credential(null, accessToken);
+  await signInWithCredential(auth, credential);
+}
+
 export default function handler(req, res) {
   const { GOOGLE_CLIENT_ID, GOOGLE_REDIRECT_URI } = process.env;
   const scopes = [
