@@ -1,10 +1,11 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBXS4aaWPgHCG9n0VuwukQLFdu2FbepyPw",
-  authDomain: "fuller-tracker.firebaseapp.com",
+  authDomain: "fuller-tracking.vercel.app",
   projectId: "fuller-tracker",
   storageBucket: "fuller-tracker.firebasestorage.app",
   messagingSenderId: "275403964917",
@@ -13,6 +14,7 @@ const firebaseConfig = {
 }
 
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
 export const db = getFirestore(app);
