@@ -1,6 +1,6 @@
-import { Button } from './Button';
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../firebase"; // adjust path as needed
+
 
 const provider = new GoogleAuthProvider();
 provider.addScope('https://www.googleapis.com/auth/calendar.readonly');
@@ -28,8 +28,8 @@ export function GoogleLogin() {
 
 
   return (
-    <Button onClick={signInWithGoogle}>
-      Log in with Google
-    </Button>
+    <button onClick={signInWithGoogle}>
+      <img src="/img/Google-Logo.png" alt="Google Login" className="button login"/>
+    </button>
   );
 }

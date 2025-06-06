@@ -1,5 +1,3 @@
-import React from 'react';
-
 
 export default function FormSubmissionsTable({ formResponses }) {
   const headers = formResponses?.[0] || ['Time Submitted', 'Description', 'Due Date'];
@@ -22,9 +20,9 @@ export default function FormSubmissionsTable({ formResponses }) {
       <div className="submissions-body">
         {dataRows.length > 0 ? (
           dataRows.map((row, i) => (
-            <div key={i} className="submission-row-container">
+            <div key={i} className="submission-row-container task-container">
               {padRow(row).map((cell, j) => (
-                <div key={j} className="submission-cell">
+                <div key={j} className="submission-cell task-cell">
                   {cell}
                 </div>
               ))}

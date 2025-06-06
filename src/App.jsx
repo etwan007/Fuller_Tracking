@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "./components/Button";
 import { Card, CardContent } from "./components/Card";
 import { GoogleLogin } from "./components/GoogleLogin";
+import { LoginMenu } from "./components/LoginMenu";
 import { GoogleCalendarView } from "./components/GoogleCalendarView";
 import GitHubRepoList from "./components/GitHubRepoList";
 import FormSubmissionsTable from "./components/FormSubmissionsTable";
@@ -11,9 +12,8 @@ import AddEventModal from "./components/AddEventModal";
 import AIBreakdownCard from "./components/AIBreakdownCard";
 import GoogleEventsCard from "./components/GoogleEventsCard";
 import TaskTable from "./components/TaskTable";
-import "./app.css";
+import "./styles/app.css";
 import { firebaseSignInWithGoogleAccessToken } from "./utils/firebaseSignIn";
-
 
 // ! Main App component
 export default function App() {
@@ -29,18 +29,12 @@ export default function App() {
   const [formResponses, setFormResponses] = useState(null);
   const [Tasks, setTasks] = useState(null);
 
-
-
   // * State for clarification/modification and bullet selection
   const [clarification, setClarification] = useState("");
   const [selectedBullet, setSelectedBullet] = useState("");
   const [loading, setLoading] = useState(false);
   const [showAddEvent, setShowAddEvent] = useState(false);
 
-  
-  
-  
-  
   // * Fetches the user's GitHub repositories from backend
   const fetchGitHubFiles = useCallback(async () => {
     try {
@@ -64,14 +58,8 @@ export default function App() {
     }
   }, []);
 
-
-    
   // Get username from the first repo (if available)
-  const githubUsername =
-    githubData?.files?.[0]?.owner?.login || null;
-
-
-
+  const githubUsername = githubData?.files?.[0]?.owner?.login || null;
 
   // * Handles AI suggestion generation using the project name
   const handleAISuggestion = useCallback(async () => {
@@ -93,8 +81,6 @@ export default function App() {
     setLoading(false); // * Clear loading state
   }, [projectName]);
 
-
-
   // * Handles clarification/modification requests
   const handleClarification = useCallback(async () => {
     if (!clarification.trim()) return; // ? Guard: Don't run if clarification is empty
@@ -114,59 +100,46 @@ export default function App() {
     setLoading(false); // * Clear loading state
   }, [clarification, projectName, currentBreakdown]);
 
-
-
   // * Handles selecting a bullet and creating a repo with its project name
-const handleSelectBullet = useCallback(async (bullet) => {
-  let name = bullet.split(":")[0].trim(); // Take only part before the colon
+  const handleSelectBullet = useCallback(
+    async (bullet) => {
+      let name = bullet.split(":")[0].trim(); // Take only part before the colon
 
-  // Replace spaces with underscores
-  name = name.replace(/\s+/g, "_");
+      // Replace spaces with underscores
+      name = name.replace(/\s+/g, "_");
 
-  // Keep only valid GitHub characters
-  name = name.replace(/[^a-zA-Z0-9._-]/g, "");
+      // Keep only valid GitHub characters
+      name = name.replace(/[^a-zA-Z0-9._-]/g, "");
 
-  // Remove leading/trailing dots, dashes, or underscores
-  name = name.replace(/^[._-]+|[._-]+$/g, "");
+      // Remove leading/trailing dots, dashes, or underscores
+      name = name.replace(/^[._-]+|[._-]+$/g, "");
 
-  // Limit length to 100 characters
-  name = name.substring(0, 100);
+      // Limit length to 100 characters
+      name = name.substring(0, 100);
 
-  // Fallback if the name becomes empty
-  if (!name) {
-    name = "new_repository";
-  }
+      // Fallback if the name becomes empty
+      if (!name) {
+        name = "new_repository";
+      }
 
-  setProjectName(name);
+      setProjectName(name);
 
-
-    // Create the repo
-    const res = await fetch("/api/github-create-repo", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name }),
-    });
-    const data = await res.json();
-    if (data.success) {
-      alert(`GitHub repository "${name}" created!`);
-      fetchGitHubFiles(); // * Refresh repo list
-    } else {
-      alert("Failed to create repo: " + (data.error || "Unknown error"));
-    }
-  }, [fetchGitHubFiles]);
-
-
-
-  // * Initiates GitHub OAuth login flow
-  const handleGitHubAuth = useCallback(async () => {
-    const res = await fetch("/api/github-login");
-    const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url; // * Redirect user to GitHub login
-    }
-  }, []);
-
-
+      // Create the repo
+      const res = await fetch("/api/github-create-repo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(`GitHub repository "${name}" created!`);
+        fetchGitHubFiles(); // * Refresh repo list
+      } else {
+        alert("Failed to create repo: " + (data.error || "Unknown error"));
+      }
+    },
+    [fetchGitHubFiles]
+  );
 
   // * Fetches Google Calendar events using the stored access token
   const fetchCalendar = useCallback(async () => {
@@ -187,8 +160,6 @@ const handleSelectBullet = useCallback(async (bullet) => {
     }
   }, []);
 
-
-
   // * Fetches Google Form responses from backend
   const fetchFormResponses = useCallback(async () => {
     let url = "/api/google-form-responses";
@@ -203,8 +174,6 @@ const handleSelectBullet = useCallback(async (bullet) => {
       alert("Failed to fetch form responses");
     }
   }, []);
-
-
 
   // --- Effects ---
   useEffect(() => {
@@ -223,15 +192,19 @@ const handleSelectBullet = useCallback(async (bullet) => {
         );
       }, 100);
 
-       firebaseSignInWithGoogleAccessToken(token)
-      .then(() => {
-        // Optionally, clean up the URL
+      firebaseSignInWithGoogleAccessToken(token)
+        .then(() => {
+          // Optionally, clean up the URL
 
-        window.history.replaceState({}, document.title, window.location.pathname);
-      })
-      .catch((err) => {
-        alert("Firebase sign-in failed: " + err.message);
-      });
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
+        })
+        .catch((err) => {
+          alert("Firebase sign-in failed: " + err.message);
+        });
 
       // * Fetch calendar events after login
       fetchCalendar();
@@ -254,25 +227,22 @@ const handleSelectBullet = useCallback(async (bullet) => {
     return () => clearInterval(interval); // * Cleanup on unmount
   }, [fetchCalendar, fetchFormResponses, fetchGitHubFiles]);
 
-
-
   const breakdownToShow = currentBreakdown || aiSuggestion;
-
-
 
   // --- Render ---
   return (
     <main>
-      <h1 className="main-title">Fuller Tracking</h1>
-      <GoogleLogin/>
+      <div className="header">
+        <LoginMenu />
+        <h1 className="main-title">Fuller Tracking</h1>
+      </div>
       <div className="main-container">
         <div className="row1-container">
-          <TaskTable/>
-          
+          <TaskTable />
+
           <FormSubmissionsTable formResponses={formResponses} />
         </div>
         <div className="row2-container">
-
           <AIBreakdownCard
             projectName={projectName}
             setProjectName={setProjectName}
@@ -291,7 +261,6 @@ const handleSelectBullet = useCallback(async (bullet) => {
             githubData={githubData}
             githubError={githubError}
             githubUsername={githubUsername}
-            onLogin={handleGitHubAuth}
           />
 
           <GoogleEventsCard

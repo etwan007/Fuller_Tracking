@@ -1,23 +1,24 @@
 import { useState, useEffect } from 'react';
 import { auth, db } from "../firebase";
-import { collection, addDoc, query, where, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, query, where, onSnapshot, orderBy } from "firebase/firestore";
 
 export default function TaskTable() {
   const headers = ['Task', 'Priority', 'Due Date'];
-  const [TaskResponses, setTaskResponses] = useState([headers]);
   const [TaskName, setTaskName] = useState('');
   const [Priority, setPriority] = useState(1);
   const [DueDate, setDueDate] = useState('');
   const [user, setUser] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [sortType, setSortType] = useState("dueDate"); // <-- make it state
 
-  // Ensure each row has the same number of cells as headers
   const padRow = (row) =>
     Array.from({ length: headers.length }, (_, i) => row?.[i] ?? '');
 
-  // Store task, priority, and due date in Firestore
+  const handleSortType = () => {
+    setSortType((prev) => (prev === "priority" ? "dueDate" : "priority"));
+  };
+
   const handleAddTask = async () => {
-    console.log("handleAddTask called", { user, TaskName, DueDate });
     if (!user) {
       alert("You must be signed in to add a task.");
       return;
@@ -48,28 +49,40 @@ export default function TaskTable() {
   }, []);
 
   useEffect(() => {
-    
     if (!user) {
       setTasks([]);
       return;
     }
-    // Real-time updates
-    const q = query(collection(db, "tasks"), where("uid", "==", user.uid));
+    let q;
+    if (sortType === "dueDate") {
+      q = query(
+        collection(db, "tasks"),
+        where("uid", "==", user.uid),
+        orderBy("dueDate", "desc"),
+        orderBy("priority")
+      );
+    } else {
+      q = query(
+        collection(db, "tasks"),
+        where("uid", "==", user.uid),
+        orderBy("priority"),
+        orderBy("dueDate", "desc")
+      );
+    }
     const unsub = onSnapshot(q, (snapshot) => {
       setTasks(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
     return () => unsub();
-  }, [user]);
+  }, [user, sortType]); // <-- depend on sortType
 
+  // Debug: log tasks
+  console.log("tasks from Firestore:", tasks);
 
-
-// Prepare rows for display
   const dataRows = tasks.map(t => [t.task, t.priority, t.dueDate]);
 
   return (
     <div className="submissions-container task">
       <h2>Tasks</h2>
-      
       <div className="task-inputs">
         <input
           type="text"
@@ -78,7 +91,6 @@ export default function TaskTable() {
           value={TaskName}
           onChange={(e) => setTaskName(e.target.value)}
         />
-
         <select
           className="input num-selector"
           style={{ width: '100px' }}
@@ -91,7 +103,6 @@ export default function TaskTable() {
             </option>
           ))}
         </select>
-
         <input
           type="date"
           className="input date"
@@ -100,22 +111,20 @@ export default function TaskTable() {
         />
       </div>
       <button className="button" onClick={handleAddTask}>Add Task</button>
-
+      <button className='button' onClick={handleSortType}>
+        {sortType.toUpperCase()}
+      </button>
       <div className="submissions-body">
         {dataRows.length > 0 ? (
-          // Sort dataRows by priority (ascending)
-          dataRows
-            .slice()
-            .sort((a, b) => a[1] - b[1])
-            .map((row, i) => (
-              <div key={i} className="submission-row-container task-container">
-                {padRow(row).map((cell, j) => (
-                  <div key={j} className="task-cell">
-                    {cell}
-                  </div>
-                ))}
-              </div>
-            ))
+          dataRows.map((row, i) => (
+            <div key={i} className="submission-row-container task-container">
+              {padRow(row).map((cell, j) => (
+                <div key={j} className="task-cell">
+                  {cell}
+                </div>
+              ))}
+            </div>
+          ))
         ) : (
           <div className="no-submissions-message">
             No Tasks
