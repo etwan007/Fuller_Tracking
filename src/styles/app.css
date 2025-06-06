@@ -36,8 +36,7 @@ h2 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 1em, 0, 1em, 0;
-  width: 100%;
+  width: 80%;
   /* background-color: red; */
   align-items: center;
 
@@ -131,11 +130,11 @@ h2 {
 }
 
 .menu-dropdown.open > *:first-child > .button.login {
-  translate: 0 2.5em;
+  translate: 0 3.5em;
 }
 
 .menu-dropdown.open > *:nth-child(2) > .button.login {
-  translate: 0 3em;
+  translate: 0 4em;
 }
 
 
