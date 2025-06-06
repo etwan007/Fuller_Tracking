@@ -69,11 +69,7 @@ export default function TaskTable() {
   return (
     <div className="submissions-container task">
       <h2>Tasks</h2>
-      {!user && (
-        <button onClick={() => signInWithPopup(auth, provider)}>
-          Sign in with Google
-        </button>
-      )}
+      
       <div className="task-inputs">
         <input
           type="text"

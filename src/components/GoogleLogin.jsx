@@ -1,16 +1,34 @@
 import { Button } from './Button';
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth } from "../firebase"; // adjust path as needed
+
+const provider = new GoogleAuthProvider();
+provider.addScope('https://www.googleapis.com/auth/calendar.readonly');
 
 export function GoogleLogin() {
-  const handleLogin = async () => {
-    const res = await fetch('/api/google-login');
-    const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
+  async function signInWithGoogle() {
+    try {
+      const result = await signInWithPopup(auth, provider);
+       const user = result.user;
+      // Get the Google access token for Calendar API
+      // You can also get the Google-specific information used to authenticate
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const idToken = credential.idToken; // Google ID Token
+    const accessToken = credential.accessToken; // Google Access Token
+
+    console.log("User signed in successfully!", user);
+    // Here you can update your UI to show the logged-in state
+
+      // You can now use accessToken to call Google Calendar API
+      console.log("Google Calendar Access Token:", accessToken);
+    } catch (err) {
+      alert("Login failed: " + err.message);
     }
   };
 
+
   return (
-    <Button onClick={handleLogin}>
+    <Button onClick={signInWithGoogle}>
       Log in with Google
     </Button>
   );
