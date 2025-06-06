@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { auth, provider, signInWithPopup, signOut, db } from "../firebase";
-import { collection, addDoc, getDocs, query, where, onSnapshot } from "firebase/firestore";
+import { auth, db } from "../firebase";
+import { collection, addDoc, query, where, onSnapshot } from "firebase/firestore";
 
 export default function TaskTable() {
   const headers = ['Task', 'Priority', 'Due Date'];
@@ -97,23 +97,25 @@ export default function TaskTable() {
           className="input date"
           value={DueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          
-          // Hide the text, show only the calendar icon
         />
       </div>
       <button className="button" onClick={handleAddTask}>Add Task</button>
 
       <div className="submissions-body">
         {dataRows.length > 0 ? (
-          dataRows.map((row, i) => (
-            <div key={i} className="submission-row-container task-container">
-              {padRow(row).map((cell, j) => (
-                <div key={j} className="task-cell">
-                  {cell}
-                </div>
-              ))}
-            </div>
-          ))
+          // Sort dataRows by priority (ascending)
+          dataRows
+            .slice()
+            .sort((a, b) => a[1] - b[1])
+            .map((row, i) => (
+              <div key={i} className="submission-row-container task-container">
+                {padRow(row).map((cell, j) => (
+                  <div key={j} className="task-cell">
+                    {cell}
+                  </div>
+                ))}
+              </div>
+            ))
         ) : (
           <div className="no-submissions-message">
             No Tasks
