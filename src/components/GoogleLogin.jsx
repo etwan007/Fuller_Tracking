@@ -1,6 +1,6 @@
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../firebase"; // adjust path as needed
-
+import { linkPendingGithubCredential } from "./GithubLogin"; // adjust path as needed
 
 const provider = new GoogleAuthProvider();
 provider.addScope('https://www.googleapis.com/auth/calendar.readonly');
@@ -15,7 +15,8 @@ export function GoogleLogin() {
     const credential = GoogleAuthProvider.credentialFromResult(result);
     const idToken = credential.idToken; // Google ID Token
     const accessToken = credential.accessToken; // Google Access Token
-
+      linkPendingGithubCredential();
+      
     console.log("User signed in successfully!", user);
     // Here you can update your UI to show the logged-in state
 
