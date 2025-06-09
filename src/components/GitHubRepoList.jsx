@@ -1,11 +1,16 @@
 import { Card, CardContent } from './Card';
 import { Button } from './Button';
+import { GithubAuthProvider } from 'firebase/auth';
+
+const githubProvider = new GithubAuthProvider();
+githubProvider.addScope('repo');
 
 export default function GitHubRepoList({ githubData, githubError, githubUsername, onLogin }) {
   return (
     <Card className="container">
       <CardContent>
         <h2>
+
           <a
             href={githubUsername ? `https://github.com/${githubUsername}` : "https://github.com"}
             target="_blank"
@@ -16,6 +21,7 @@ export default function GitHubRepoList({ githubData, githubError, githubUsername
           </a>
         </h2>
         <ul className="repo-list">
+          
           {githubError ? (
             <li>{githubError}</li>
           ) : githubData?.files?.length > 0 ? (

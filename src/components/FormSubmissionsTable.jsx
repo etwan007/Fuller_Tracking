@@ -10,13 +10,7 @@ export default function FormSubmissionsTable({ formResponses }) {
   return (
     <div className="container submissions">
       <h2>Form Submissions</h2>
-      <div className="submissions-header">
-        {headers.map((header, i) => (
-          <div key={i} className="header-item">
-            <div className="header-item-bg">{header}</div>
-          </div>
-        ))}
-      </div>
+      
       <div className="submissions-body">
         {dataRows.length > 0 ? (
           dataRows.map((row, i) => (

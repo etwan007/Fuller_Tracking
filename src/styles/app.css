@@ -86,6 +86,7 @@ h2 {
   text-align: center;
   justify-content: center;
   pointer-events: none;
+  z-index: 1001;
 }
 
 .menu-dropdown.open {
@@ -93,6 +94,18 @@ h2 {
   max-height: 500px;
   pointer-events: auto;
 
+}
+
+
+.blur-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  pointer-events: none;
 }
 
 .menu-dropdown button {
@@ -291,13 +304,34 @@ h2 {
   background: #fff;
 }
 
+.date-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
 .input.date {
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
   color: transparent;
+
   padding: 0;
   background-color: #fff;
+  position: relative;
+}
+
+.input.date::-webkit-calendar-picker-indicator {
+  display: none; /* Hide the calendar icon on Chrome/Safari */
+}
+
+.calendar-icon {
+  width: 70%;
+  height: 70%;
+  cursor: pointer;
+  position: absolute;
+  border-radius: 50%;
 }
 
 .submission-row-container.task-container .task-cell:nth-child(1) {
@@ -330,6 +364,61 @@ h2 {
 .task-cell:last-child {
   margin-right: 0;
 }
+
+
+
+
+
+.popup-overlay {
+  position: fixed;
+  justify-self: center;
+  align-self: center;
+  width: 50vw;
+  inset: 0;
+
+  display: flex;
+  z-index: 1001;
+}
+
+.popup-details p {
+  margin: 0;
+}
+
+.popup-items {
+  display: flex;
+  flex-direction: row;
+  margin-top: 1rem;
+  justify-content: center;
+  gap: 5rem;
+}
+
+.popup-details {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 1rem;
+  width: auto;
+}
+ .popup-options {
+  display: flex;
+  flex-direction: row;
+  gap: .5rem;
+  height: 4rem;
+ }
+
+
+
+
+
+
+
+
+
+
+
 
 /* === FORM SUBMISSIONS TABLE (FormSubmissionsTable) === */
 
@@ -656,7 +745,6 @@ h2 {
 /* === BUTTONS === */
 .button {
   padding: 1rem;
-  width: 40%;
   background: #10B981;
   color: #fff;
   border: none;
@@ -668,8 +756,7 @@ h2 {
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.263);
   transition: all 0.3s ease;
 }
-.button:hover,
-.button:focus {
+.button:hover {
   background-color: #059669;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.263);
   transform: translateY(-2px);
