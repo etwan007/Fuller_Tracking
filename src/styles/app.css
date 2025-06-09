@@ -365,17 +365,26 @@ h2 {
   margin-right: 0;
 }
 
-
+/* <h2>
+          <a
+            href={username ? `https:ithub.com/${username}` : "https://github.com
+            target="_blank"
+            rel="noreferrer"
+            style={{ color: "inherit", textDecoration: "none" }}
+          >
+            GitHub Repositories
+          </a>
+        </h2>
 
 
 
 .popup-overlay {
-  position: fixed;
+  position: fixed; */
   justify-self: center;
   align-self: center;
   width: 50vw;
   inset: 0;
-
+  transition: all .3s ease-in;
   display: flex;
   z-index: 1001;
 }
