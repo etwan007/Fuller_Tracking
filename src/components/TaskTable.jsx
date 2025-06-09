@@ -78,10 +78,21 @@ export default function TaskTable() {
   // Debug: log tasks
   console.log("tasks from Firestore:", tasks);
 
-  const dataRows = tasks.map(t => [t.task, t.priority, t.dueDate]);
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    const [year, month, day] = dateStr.split('-');
+    if (!year || !month || !day) return dateStr;
+    return `${month}/${day}`;
+  };
+
+  const dataRows = tasks.map(t => [
+    t.task,
+    t.priority,
+    formatDate(t.dueDate)
+  ]);
 
   return (
-    <div className="submissions-container task">
+    <div className="container submissions task">
       <h2>Tasks</h2>
       <div className="task-inputs">
         <input
@@ -92,8 +103,7 @@ export default function TaskTable() {
           onChange={(e) => setTaskName(e.target.value)}
         />
         <select
-          className="input num-selector"
-          style={{ width: '100px' }}
+          className="button input num-selector"
           value={Priority}
           onChange={(e) => setPriority(Number(e.target.value))}
         >
@@ -105,15 +115,17 @@ export default function TaskTable() {
         </select>
         <input
           type="date"
-          className="input date"
+          className="button input date"
           value={DueDate}
           onChange={(e) => setDueDate(e.target.value)}
         />
       </div>
+      <div className="task-options">
       <button className="button" onClick={handleAddTask}>Add Task</button>
       <button className='button' onClick={handleSortType}>
         {sortType.toUpperCase()}
       </button>
+      </div>
       <div className="submissions-body">
         {dataRows.length > 0 ? (
           dataRows.map((row, i) => (

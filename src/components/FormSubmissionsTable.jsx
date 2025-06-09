@@ -8,7 +8,7 @@ export default function FormSubmissionsTable({ formResponses }) {
     Array.from({ length: headers.length }, (_, i) => row?.[i] ?? '');
 
   return (
-    <div className="submissions-container">
+    <div className="container submissions">
       <h2>Form Submissions</h2>
       <div className="submissions-header">
         {headers.map((header, i) => (
