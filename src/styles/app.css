@@ -1,4 +1,10 @@
 /* === GLOBAL STYLES === */
+main {
+
+  width: 100%;
+  justify-content: center;
+}
+
 body {
   background: #212121;
   color: #222;
@@ -7,6 +13,8 @@ body {
   margin: 0;
   padding: 0;
   font-size: medium;
+  width: 100vw;
+
 }
 
 h1 {              
@@ -46,6 +54,7 @@ h2 {
 .header .login-menu {
   position: absolute;
   left: 30px;
+  margin-top: 3rem;
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -197,7 +206,6 @@ h2 {
 
 /* === MAIN CONTAINER === */
 .main-container {
-  padding: 1.5rem;
   max-width: 100%;
   margin: 0 0;
   min-height: 100vh;
@@ -211,8 +219,8 @@ h2 {
   justify-content: center;
   align-items: flex-start;
   gap: 1rem;
-  padding: .5rem;
   border-radius: 1rem;
+  width: 100%;
 }
 
 .row2-container {
@@ -424,6 +432,7 @@ h2 {
 @media (max-width: 600px) {
   .container.submissions {
     padding: 0.8rem;
+    max-width: 90%;
   }
 }
 
@@ -797,7 +806,7 @@ h2 {
   }
 
   .main-container {
-    padding: 1rem;
+    width: 100%;
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -813,8 +822,7 @@ h2 {
   }
 
   .container {
-    width: 100%;
-
+    min-width: 90%;
   }
 
   .repo-list {
