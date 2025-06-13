@@ -10,6 +10,7 @@ githubProvider.addScope('read:user'); // Read user profile information
 export function GitHubLogin({ onLoginSuccess }) {
   async function signInWithGitHub() {
     try {
+      // Try Firebase popup login first
       const result = await signInWithPopup(auth, githubProvider);
       const user = result.user;
       const credential = GithubAuthProvider.credentialFromResult(result);
@@ -30,7 +31,23 @@ export function GitHubLogin({ onLoginSuccess }) {
       }
     } catch (error) {
       console.error("GitHub login failed:", error);
-      alert("GitHub login failed. Please try again.");
+      
+      // If Firebase popup fails, fallback to OAuth flow
+      if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
+        console.log("Popup blocked, redirecting to OAuth flow...");
+        try {
+          const response = await fetch('/api/github-login');
+          const data = await response.json();
+          if (data.url) {
+            window.location.href = data.url;
+          }
+        } catch (oauthError) {
+          console.error("OAuth redirect failed:", oauthError);
+          alert("GitHub login failed. Please try again.");
+        }
+      } else {
+        alert("GitHub login failed. Please try again.");
+      }
     }
   }
 

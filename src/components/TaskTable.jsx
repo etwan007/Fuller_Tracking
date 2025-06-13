@@ -105,94 +105,14 @@ export default function TaskTable() {
     if (!year || !month || !day) return dateStr;
     return `${month}/${day}`;
   };
-
   const dataRows = tasks.map((t) => [
     t.task,
     t.priority,
     formatDate(t.dueDate),
   ]);
-  useEffect(() => {
-    const checkAndCreateRepos = async () => {
-      if (!user) {
-        console.log("No user authenticated, skipping repo check");
-        return;
-      }
 
-      try {
-        const reposSnapshot = await getDocs(collection(db, "repos"));
-        const repos = reposSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-
-        console.log("Found repos in Firestore:", repos);        for (const repo of repos) {
-          try {
-            // Get GitHub token for API calls
-            const githubToken = localStorage.getItem("github_access_token");
-            const headers = {
-              'Content-Type': 'application/json',
-            };
-            
-            // Include Authorization header if token exists
-            if (githubToken) {
-              headers.Authorization = `Bearer ${githubToken}`;
-            }
-            
-            // Use the correct API endpoint for checking repository existence
-            const response = await fetch("/api/github-files", {
-              headers: headers
-            });
-            
-            if (!response.ok) {
-              if (response.status === 401) {
-                console.log("GitHub authentication required");
-                continue; // Skip if not authenticated
-              }
-              throw new Error(`Failed to fetch GitHub repositories: ${response.status}`);
-            }
-
-            const data = await response.json();
-            const githubRepos = data.files || [];
-            
-            // Check if the repo exists in GitHub
-            const repoExists = githubRepos.some(githubRepo => 
-              githubRepo.name === repo.name || githubRepo.full_name.endsWith(`/${repo.name}`)
-            );
-
-            if (!repoExists) {
-              console.log(`Repository ${repo.name} not found on GitHub, creating...`);
-              
-              // Create the repository using the API endpoint
-              const createResponse = await fetch("/api/github-create-repo", {
-                method: "POST",
-                headers: headers,
-                body: JSON.stringify({ 
-                  name: repo.name,
-                  description: `Repository for ${repo.name} task tracking`
-                }),
-              });
-
-              if (createResponse.ok) {
-                const createData = await createResponse.json();
-                console.log(`Repository ${repo.name} created successfully:`, createData);
-              } else {
-                const errorData = await createResponse.json();
-                console.error(`Failed to create repository ${repo.name}:`, errorData);
-              }
-            } else {
-              console.log(`Repository ${repo.name} already exists on GitHub`);
-            }
-          } catch (repoError) {
-            console.error(`Error processing repository ${repo.name}:`, repoError);
-          }
-        }
-      } catch (error) {
-        console.error("Error checking and creating repos:", error);
-      }
-    };
-
-    // Only run this check if user is authenticated
-    if (user) {
-      checkAndCreateRepos();
-    }
-  }, [user]); // Depend on user so it runs when authentication state changes
+  // Note: Repository sync is now handled by GitHubRepoList component
+  // GitHub is the source of truth, and database reflects GitHub state
 
   return (
     <div className="container submissions task">

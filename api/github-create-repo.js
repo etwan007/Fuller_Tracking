@@ -1,6 +1,5 @@
 import { db } from '../src/firebase';
-import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
-const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+import { collection, addDoc, doc, updateDoc, setDoc, getDocs, query, where, deleteDoc } from 'firebase/firestore';
 import { parse } from 'cookie';
 
 const GITHUB_API_URL = 'https://api.github.com';
@@ -142,11 +141,47 @@ async function createGitHubRepository(token, config) {
     } catch (parseError) {
       errorMessage += ` - ${errorBody}`;
     }
-    
-    throw new Error(errorMessage);
+      throw new Error(errorMessage);
   }
 
   return await response.json();
+}
+
+/**
+ * Syncs a GitHub repository to the Firebase database
+ * Uses GitHub repository ID to create unique document keys
+ */
+async function syncRepositoryToDatabase(githubRepo, uid) {
+  try {
+    // Create a unique document ID using user ID and GitHub repo ID
+    const docId = `${uid}_${githubRepo.id}`;
+    const repoDocRef = doc(db, 'repos', docId);
+    
+    await setDoc(repoDocRef, {
+      uid: uid,
+      name: githubRepo.name,
+      githubId: githubRepo.id,
+      owner: githubRepo.owner.login,
+      full_name: githubRepo.full_name,
+      html_url: githubRepo.html_url,
+      description: githubRepo.description,
+      private: githubRepo.private,
+      language: githubRepo.language,
+      stargazers_count: githubRepo.stargazers_count || 0,
+      forks_count: githubRepo.forks_count || 0,
+      updated_at: githubRepo.updated_at,
+      created_at: githubRepo.created_at,
+      default_branch: githubRepo.default_branch,
+      syncedAt: new Date().toISOString(),
+      source: 'github-sync'
+    });
+    
+    console.log(`Repository ${githubRepo.name} synced to database`);
+    return docId;
+  } catch (error) {
+    console.error(`Error syncing repository ${githubRepo.name} to database:`, error);
+    throw error;
+  }
 }
 
 export default async function githubCreateRepoHandler(req, res) {
@@ -164,7 +199,6 @@ export default async function githubCreateRepoHandler(req, res) {
     res.status(405).json({ error: 'Method not allowed', supportedMethods: ['POST'] });
     return;
   }
-
   const { 
     name, 
     taskId, 
@@ -172,7 +206,8 @@ export default async function githubCreateRepoHandler(req, res) {
     private: isPrivate, 
     autoInit, 
     gitignoreTemplate, 
-    licenseTemplate 
+    licenseTemplate,
+    uid // Add uid parameter to connect with Firebase user
   } = req.body;
 
   // Validate repository name
@@ -217,23 +252,12 @@ export default async function githubCreateRepoHandler(req, res) {
         action: 'Please re-authenticate with GitHub' 
       });
       return;
-    }
-
-    // Check if repository already exists
+    }    // Check if repository already exists
     const existenceCheck = await checkRepositoryExists(githubToken, userInfo.login, sanitizedName);
     
     if (existenceCheck.exists) {
-      // Repository already exists - return success with existing repo info
-      const repoDoc = await addDoc(collection(db, 'repos'), { 
-        name: sanitizedName,
-        githubId: existenceCheck.repository.id,
-        owner: userInfo.login,
-        fullName: existenceCheck.repository.full_name,
-        htmlUrl: existenceCheck.repository.html_url,
-        private: existenceCheck.repository.private,
-        createdAt: new Date().toISOString(),
-        source: 'existing'
-      });
+      // Repository already exists - sync it to database
+      const docId = await syncRepositoryToDatabase(existenceCheck.repository, uid || userInfo.login);
 
       // Update the task document if taskId is provided
       if (taskId) {
@@ -248,15 +272,15 @@ export default async function githubCreateRepoHandler(req, res) {
 
       res.status(200).json({ 
         success: true, 
-        repoId: repoDoc.id,
+        repoId: docId,
         repository: existenceCheck.repository,
-        message: 'Repository already exists - linked successfully',
+        message: 'Repository already exists - synced to database',
         action: 'existing'
       });
       return;
     }
 
-    // Repository doesn't exist, create it
+    // Repository doesn't exist, create it on GitHub first
     const repoConfig = {
       name: sanitizedName,
       description,
@@ -267,18 +291,9 @@ export default async function githubCreateRepoHandler(req, res) {
     };
 
     const newRepository = await createGitHubRepository(githubToken, repoConfig);
-
-    // Add the repository to the Firestore `repos` collection
-    const repoDoc = await addDoc(collection(db, 'repos'), { 
-      name: sanitizedName,
-      githubId: newRepository.id,
-      owner: userInfo.login,
-      fullName: newRepository.full_name,
-      htmlUrl: newRepository.html_url,
-      private: newRepository.private,
-      createdAt: new Date().toISOString(),
-      source: 'created'
-    });
+    
+    // Sync the newly created repository to database
+    const docId = await syncRepositoryToDatabase(newRepository, uid || userInfo.login);
 
     // Update the task document if taskId is provided
     if (taskId) {
@@ -289,11 +304,9 @@ export default async function githubCreateRepoHandler(req, res) {
         console.error('Error updating task:', taskError);
         // Don't fail the entire request if task update fails
       }
-    }
-
-    res.status(201).json({ 
+    }    res.status(201).json({ 
       success: true, 
-      repoId: repoDoc.id,
+      repoId: docId,
       repository: newRepository,
       message: 'Repository created successfully',
       action: 'created'

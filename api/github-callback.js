@@ -1,7 +1,6 @@
 import { serialize } from 'cookie';
 
 export default async function githubCallbackHandler(req, res) {
-  const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
   const { code, state, error, error_description, redirect } = req.query;
 
   // Handle OAuth errors (user denied access, etc.)
@@ -74,9 +73,7 @@ export default async function githubCallbackHandler(req, res) {
     }
 
     const userData = await userRes.json();
-    console.log(`GitHub OAuth successful for user: ${userData.login}`);
-
-    // Set secure HTTP-only cookie with the access token
+    console.log(`GitHub OAuth successful for user: ${userData.login}`);    // Set secure HTTP-only cookie with the access token
     const cookieOptions = {
       httpOnly: true,
       path: '/',
@@ -87,10 +84,10 @@ export default async function githubCallbackHandler(req, res) {
 
     res.setHeader('Set-Cookie', serialize('github_token', tokenData.access_token, cookieOptions));
 
-    // Redirect to the requested URL or default to home
+    // Redirect to the requested URL or default to home with token in URL for localStorage storage
     const redirectUrl = redirect && typeof redirect === 'string'
       ? decodeURIComponent(redirect)
-      : '/?github_auth=success';
+      : `/?github_auth=success&github_access_token=${encodeURIComponent(tokenData.access_token)}`;
       
     res.writeHead(302, { Location: redirectUrl });
     res.end();

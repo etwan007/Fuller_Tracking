@@ -44,9 +44,6 @@ export default async function githubFilesHandler(req, res) {
       });
     }    console.log('GitHub token found, making API calls...');
 
-    // Use built-in fetch (Node.js 18+) or fallback
-    const fetchFunction = globalThis.fetch || (await import('node-fetch')).default;
-
     // GitHub API best practices: Include proper headers
     const headers = {
       Authorization: `token ${githubToken}`,
@@ -55,7 +52,7 @@ export default async function githubFilesHandler(req, res) {
     };
 
     // First, get user information for better context
-    const userResponse = await fetchFunction('https://api.github.com/user', { headers });
+    const userResponse = await fetch('https://api.github.com/user', { headers });
 
     if (!userResponse.ok) {
       if (userResponse.status === 401) {
@@ -80,7 +77,7 @@ export default async function githubFilesHandler(req, res) {
     reposUrl.searchParams.set('per_page', '100'); // Get more repos (default is 30)
     reposUrl.searchParams.set('type', 'all'); // Include all types of repositories
 
-    const response = await fetchFunction(reposUrl.toString(), { headers });
+    const response = await fetch(reposUrl.toString(), { headers });
 
     if (!response.ok) {
       const errorText = await response.text();

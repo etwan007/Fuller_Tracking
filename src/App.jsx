@@ -14,6 +14,7 @@ import GoogleEventsCard from "./components/GoogleEventsCard";
 import TaskTable from "./components/TaskTable";
 import "./styles/app.css";
 import { firebaseSignInWithGoogleAccessToken } from "./utils/firebaseSignIn";
+import { auth } from "./firebase";
 
 // ! Main App component
 export default function App() {
@@ -21,59 +22,52 @@ export default function App() {
   const [projectName, setProjectName] = useState("");
   // Hardcoded AI suggestion for local UI editing
   const [aiSuggestion, setAiSuggestion] = useState("");
-
   const [currentBreakdown, setCurrentBreakdown] = useState("");
-  const [githubData, setGithubData] = useState(null);
-  const [githubError, setGithubError] = useState(null);
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [formResponses, setFormResponses] = useState(null);
   const [Tasks, setTasks] = useState(null);
+  const [user, setUser] = useState(null);
 
   // * State for clarification/modification and bullet selection
   const [clarification, setClarification] = useState("");
   const [selectedBullet, setSelectedBullet] = useState("");
   const [loading, setLoading] = useState(false);
   const [showAddEvent, setShowAddEvent] = useState(false);
-  // * Fetches the user's GitHub repositories from backend
-  const fetchGitHubFiles = useCallback(async () => {
-    try {
-      // Get GitHub token from localStorage
-      const githubToken = localStorage.getItem("github_access_token");
-      
-      const headers = {
-        'Content-Type': 'application/json',
-      };
-      
-      // Include Authorization header if token exists
-      if (githubToken) {
-        headers.Authorization = `Bearer ${githubToken}`;
-      }
-      
-      const res = await fetch("/api/github-files", {
-        headers: headers
-      });
-      
-      if (!res.ok) {
-        if (res.status === 401) {
-          setGithubData(null);
-          setGithubError("Please log in to see Repositories");
-        } else {
-          setGithubData(null);
-          setGithubError("Failed to fetch repositories");
-        }
-        return;
-      }
-      const data = await res.json();
-      setGithubData(data);
-      setGithubError(null);
-    } catch (err) {
-      setGithubData(null);
-      setGithubError("A network error occurred");
-    }
+  // Firebase auth state listener
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((u) => setUser(u));
+    return () => unsubscribe();
   }, []);
 
-  // Get username from the first repo (if available)
-  const githubUsername = githubData?.files?.[0]?.owner?.login || null;
+  // * Syncs GitHub repositories to Firebase database (GitHub as source of truth)
+  const syncGitHubRepositories = useCallback(async () => {
+    if (!user) return;
+    
+    try {
+      const githubToken = localStorage.getItem("github_access_token");
+      if (!githubToken) return;
+
+      const response = await fetch("/api/github-sync", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${githubToken}`
+        },
+        body: JSON.stringify({
+          uid: user.uid
+        })
+      });
+
+      if (response.ok) {
+        const syncResult = await response.json();
+        console.log("GitHub sync completed:", syncResult);
+        return syncResult;
+      } else {
+        console.error("GitHub sync failed:", response.status);
+      }
+    } catch (error) {
+      console.error("Error syncing GitHub repositories:", error);
+    }  }, [user]);
 
   // * Handles AI suggestion generation using the project name
   const handleAISuggestion = useCallback(async () => {
@@ -145,8 +139,7 @@ export default function App() {
       if (githubToken) {
         headers.Authorization = `Bearer ${githubToken}`;
       }
-      
-      const res = await fetch("/api/github-create-repo", {
+        const res = await fetch("/api/github-create-repo", {
         method: "POST",
         headers: headers,
         body: JSON.stringify({ 
@@ -154,14 +147,16 @@ export default function App() {
           description: `Repository for project: ${bullet}`,
           private: true, // Default to private for security
           autoInit: true, // Initialize with README
+          uid: user?.uid // Pass Firebase user ID
         }),
       });
-      
-      const data = await res.json();
+        const data = await res.json();
       if (data.success) {
         const action = data.action === 'created' ? 'created' : 'linked to existing';
         alert(`GitHub repository "${name}" ${action} successfully!`);
-        fetchGitHubFiles(); // * Refresh repo list
+        
+        // Trigger GitHub sync to ensure Firebase is up to date
+        await syncGitHubRepositories();
         
         // Open the repository in a new tab if it was just created
         if (data.repository && data.repository.html_url) {
@@ -174,11 +169,10 @@ export default function App() {
         
         // If it's an authentication error, suggest re-login
         if (data.error && data.error.includes('Unauthorized')) {
-          alert('Please re-authenticate with GitHub and try again.');
-        }
+          alert('Please re-authenticate with GitHub and try again.');        }
       }
     },
-    [fetchGitHubFiles]
+    [syncGitHubRepositories]
   );
 
   // * Fetches Google Calendar events using the stored access token
@@ -214,12 +208,12 @@ export default function App() {
       alert("Failed to fetch form responses");
     }
   }, []);
-
   // --- Effects ---
   useEffect(() => {
     // * Check if redirected from Google with an access_token in the URL
     const url = new URL(window.location.href);
     const token = url.searchParams.get("access_token");
+    const githubToken = url.searchParams.get("github_access_token");
 
     if (token) {
       localStorage.setItem("google_access_token", token); // * Save token for later use
@@ -248,6 +242,16 @@ export default function App() {
 
       // * Fetch calendar events after login
       fetchCalendar();
+    } else if (githubToken) {
+      // Handle GitHub OAuth callback
+      localStorage.setItem("github_access_token", githubToken);
+      setTimeout(() => {        // * Remove token from URL for cleanliness
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+      }, 100);
     } else {
       // * If already logged in, fetch calendar events
       const existingToken = localStorage.getItem("google_access_token");
@@ -255,17 +259,15 @@ export default function App() {
     }
 
     fetchFormResponses(); // * Fetch form responses on load
-    fetchGitHubFiles(); // <-- Add this line
 
-    // Set up polling to refresh form responses and GitHub files every 60 seconds
+    // Set up polling to refresh form responses every 60 seconds
     const interval = setInterval(() => {
       fetchFormResponses();
-      fetchGitHubFiles();
-      console.log(githubData?.user?.login || "No GitHub user logged in"); // Fix: Safely access login
-    }, 60000); // 60,000 ms = 60 secondsd
+      console.log(user?.uid || "No Firebase user logged in");
+    }, 60000); // 60,000 ms = 60 seconds
 
     return () => clearInterval(interval); // * Cleanup on unmount
-  }, [fetchCalendar, fetchFormResponses, fetchGitHubFiles, githubData]);
+  }, [fetchCalendar, fetchFormResponses]);
 
   const breakdownToShow = currentBreakdown || aiSuggestion;
 
@@ -295,14 +297,7 @@ export default function App() {
             handleAISuggestion={handleAISuggestion}
             handleClarification={handleClarification}
             handleSelectBullet={handleSelectBullet}
-          />
-
-          <GitHubRepoList
-            githubData={githubData}
-            githubError={githubError}
-            githubUsername={githubUsername}
-            accessToken={githubData?.accessToken}
-          />
+          />          <GitHubRepoList />
 
           <GoogleEventsCard
             calendarEvents={calendarEvents}
