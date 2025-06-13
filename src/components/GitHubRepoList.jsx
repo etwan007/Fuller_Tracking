@@ -80,7 +80,7 @@ export default function GitHubRepoSync({ accessToken: propAccessToken, githubErr
     syncRepositories();
 
     // Set up periodic sync every 2 minutes
-    const interval = setInterval(syncRepositories, 10000);
+    const interval = setInterval(syncRepositories, 60000);
 
     return () => clearInterval(interval);
   }, [user, accessToken]);
