@@ -2,7 +2,10 @@ import { signInWithPopup, GithubAuthProvider, fetchSignInMethodsForEmail, linkWi
 import { auth } from "../firebase"; // adjust path as needed
 
 const githubProvider = new GithubAuthProvider();
-githubProvider.addScope('repo');
+// Enhanced OAuth scopes for better repository management
+githubProvider.addScope('repo'); // Full repository access
+githubProvider.addScope('user:email'); // Access to user email
+githubProvider.addScope('read:user'); // Read user profile information
 
 export function GitHubLogin({ onLoginSuccess }) {
   async function signInWithGitHub() {

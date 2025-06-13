@@ -14,6 +14,7 @@ export default function GoogleEventsCard({
       <CardContent>
         <h2>Google Calendar:</h2>
         
+          {calendarEvents && calendarEvents.length > 0 ? (
           <>
             <div className="calendar-header">
               <h3 className="calendar-title">Upcoming Events</h3>
@@ -24,7 +25,12 @@ export default function GoogleEventsCard({
             <GoogleCalendarView events={calendarEvents} />
           </>
         ) : (
-          <p>No calendar events found</p>
+          <div>
+            <p>No calendar events found</p>
+            <Button onClick={() => setShowAddEvent(true)}>
+              Add Event
+            </Button>
+          </div>
         )}
       </CardContent>
     </Card>

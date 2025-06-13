@@ -15,6 +15,9 @@ import {
 export default function GitHubRepoSync({ accessToken: propAccessToken, githubError }) {
   const [repos, setRepos] = useState([]);
   const [user, setUser] = useState(null);
+  const [githubUser, setGithubUser] = useState(null); // Store GitHub user info
+  const [isLoading, setIsLoading] = useState(false);
+  const [lastSync, setLastSync] = useState(null);
   let accessToken = propAccessToken; // Use a local variable to manage accessToken
 
   useEffect(() => {
@@ -41,28 +44,52 @@ export default function GitHubRepoSync({ accessToken: propAccessToken, githubErr
         console.error("Access token is undefined and not found in local storage");
         return;
       }
-    }
-
-    const interval = setInterval(async () => {
+    }    const interval = setInterval(async () => {
       try {
+        setIsLoading(true);
         console.log("Polling GitHub repos...");
-        const res = await fetch("https://api.github.com/user/repos", {
-          headers: {
-            Authorization: `token ${accessToken}`,
-          },
+          // Use the enhanced API endpoint
+        const headers = {
+          'Content-Type': 'application/json',
+        };
+        
+        // Include Authorization header if token exists
+        if (accessToken) {
+          headers.Authorization = `Bearer ${accessToken}`;
+        }
+        
+        const res = await fetch("/api/github-files", {
+          headers: headers
         });
 
         if (!res.ok) {
+          if (res.status === 401) {
+            console.error("GitHub authentication failed");
+            return;
+          }
           throw new Error(`GitHub API error: ${res.status} ${res.statusText}`);
         }
 
-        const data = await res.json();
+        const responseData = await res.json();
+        
+        // Handle enhanced API response format
+        const data = responseData.files || [];
+        const githubUserData = responseData.user;
+        const metadata = responseData.metadata;
+
         if (!Array.isArray(data)) {
-          console.error("Unexpected response format:", data);
+          console.error("Unexpected response format:", responseData);
           return;
         }
 
         console.log("Fetched repos:", data);
+        if (githubUserData) {
+          setGithubUser(githubUserData);
+          console.log("GitHub user info:", githubUserData);
+        }
+        if (metadata) {
+          setLastSync(new Date(metadata.fetched_at));
+        }
 
         const userReposRef = collection(db, "repos");
 
@@ -81,19 +108,33 @@ export default function GitHubRepoSync({ accessToken: propAccessToken, githubErr
           }
         }
 
-        // Add or update repos in Firebase
+        // Add or update repos in Firebase with enhanced data
         for (const repo of data) {
           const repoDocRef = doc(userReposRef, `${user.uid}_${repo.id}`);
           await setDoc(repoDocRef, {
             uid: user.uid,
             name: repo.name,
+            full_name: repo.full_name,
             html_url: repo.html_url,
+            description: repo.description,
+            private: repo.private,
+            language: repo.language,
+            stargazers_count: repo.stargazers_count,
+            forks_count: repo.forks_count,
             updated_at: repo.updated_at,
+            created_at: repo.created_at,
+            default_branch: repo.default_branch,
+            topics: repo.topics || [],
+            size: repo.size,
+            last_synced: new Date().toISOString()
           });
           console.log(`Updated repo: ${repo.name}`);
         }
+        
+        setIsLoading(false);
       } catch (err) {
         console.error("Failed to sync repos:", err);
+        setIsLoading(false);
       }
     }, 30000); // Poll every 30 seconds
 
@@ -115,25 +156,57 @@ export default function GitHubRepoSync({ accessToken: propAccessToken, githubErr
 
     return () => unsubscribe();
   }, [user]);
-
   return (
     <div className="container">
       <h2>
-          <a
-            href={user ? `https:ithub.com/${user}` : "https://github.com"}
-            target="_blank"
-            rel="noreferrer"
-            style={{ color: "inherit", textDecoration: "none" }}
-          >
-            GitHub Repositories
-          </a>
-        </h2>
-       <ul className="repo-list">
+        <a
+          href={githubUser ? githubUser.html_url : "https://github.com"}
+          target="_blank"
+          rel="noreferrer"
+          style={{ color: "inherit", textDecoration: "none" }}
+        >
+          GitHub Repositories
+          {githubUser && ` (${githubUser.login})`}
+        </a>
+      </h2>
+      
+      {/* GitHub user info and sync status */}
+      {githubUser && (
+        <div style={{ marginBottom: '1rem', fontSize: '0.9rem', color: '#666' }}>
+          <div>
+            {githubUser.public_repos} public • {githubUser.private_repos || 0} private repos
+          </div>
+          {lastSync && (
+            <div>Last synced: {lastSync.toLocaleTimeString()}</div>
+          )}
+          {isLoading && <div>🔄 Syncing repositories...</div>}
+        </div>
+      )}
+      
+      <ul className="repo-list">
         {repos.map((repo, idx) => (
-          <li key={repo.id || idx}>
-            <a href={repo.html_url} target="_blank" rel="noreferrer" className="button">
-              {repo.name}
-            </a>
+          <li key={repo.id || idx} style={{ marginBottom: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <a href={repo.html_url} target="_blank" rel="noreferrer" className="button">
+                {repo.name}
+                {repo.private && <span style={{ marginLeft: '0.5rem', fontSize: '0.8rem' }}>🔒</span>}
+              </a>
+              {repo.language && (
+                <span style={{ fontSize: '0.8rem', color: '#666' }}>
+                  {repo.language}
+                </span>
+              )}
+              {repo.stargazers_count > 0 && (
+                <span style={{ fontSize: '0.8rem', color: '#666' }}>
+                  ⭐ {repo.stargazers_count}
+                </span>
+              )}
+            </div>
+            {repo.description && (
+              <div style={{ fontSize: '0.8rem', color: '#888', marginTop: '0.2rem' }}>
+                {repo.description}
+              </div>
+            )}
           </li>
         ))}
       </ul>

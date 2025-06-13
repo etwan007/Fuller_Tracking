@@ -25,7 +25,7 @@ export default function App() {
   const [currentBreakdown, setCurrentBreakdown] = useState("");
   const [githubData, setGithubData] = useState(null);
   const [githubError, setGithubError] = useState(null);
-  const [calendarEvents, setCalendarEvents] = useState(null);
+  const [calendarEvents, setCalendarEvents] = useState([]);
   const [formResponses, setFormResponses] = useState(null);
   const [Tasks, setTasks] = useState(null);
 
@@ -34,11 +34,25 @@ export default function App() {
   const [selectedBullet, setSelectedBullet] = useState("");
   const [loading, setLoading] = useState(false);
   const [showAddEvent, setShowAddEvent] = useState(false);
-
   // * Fetches the user's GitHub repositories from backend
   const fetchGitHubFiles = useCallback(async () => {
     try {
-      const res = await fetch("/api/github-files");
+      // Get GitHub token from localStorage
+      const githubToken = localStorage.getItem("github_access_token");
+      
+      const headers = {
+        'Content-Type': 'application/json',
+      };
+      
+      // Include Authorization header if token exists
+      if (githubToken) {
+        headers.Authorization = `Bearer ${githubToken}`;
+      }
+      
+      const res = await fetch("/api/github-files", {
+        headers: headers
+      });
+      
       if (!res.ok) {
         if (res.status === 401) {
           setGithubData(null);
@@ -99,7 +113,6 @@ export default function App() {
     setClarification(""); // * Clear clarification input
     setLoading(false); // * Clear loading state
   }, [clarification, projectName, currentBreakdown]);
-
   // * Handles selecting a bullet and creating a repo with its project name
   const handleSelectBullet = useCallback(
     async (bullet) => {
@@ -122,20 +135,47 @@ export default function App() {
         name = "new_repository";
       }
 
-      setProjectName(name);
-
-      // Create the repo
+      setProjectName(name);      // Create the repo with enhanced configuration
+      const githubToken = localStorage.getItem("github_access_token");
+      const headers = {
+        "Content-Type": "application/json"
+      };
+      
+      // Include Authorization header if token exists
+      if (githubToken) {
+        headers.Authorization = `Bearer ${githubToken}`;
+      }
+      
       const res = await fetch("/api/github-create-repo", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name }),
+        headers: headers,
+        body: JSON.stringify({ 
+          name,
+          description: `Repository for project: ${bullet}`,
+          private: true, // Default to private for security
+          autoInit: true, // Initialize with README
+        }),
       });
+      
       const data = await res.json();
       if (data.success) {
-        alert(`GitHub repository "${name}" created!`);
+        const action = data.action === 'created' ? 'created' : 'linked to existing';
+        alert(`GitHub repository "${name}" ${action} successfully!`);
         fetchGitHubFiles(); // * Refresh repo list
+        
+        // Open the repository in a new tab if it was just created
+        if (data.repository && data.repository.html_url) {
+          window.open(data.repository.html_url, '_blank');
+        }
       } else {
-        alert("Failed to create repo: " + (data.error || "Unknown error"));
+        console.error('Repository creation failed:', data);
+        const errorMessage = data.error || "Unknown error occurred";
+        alert(`Failed to create repository: ${errorMessage}`);
+        
+        // If it's an authentication error, suggest re-login
+        if (data.error && data.error.includes('Unauthorized')) {
+          alert('Please re-authenticate with GitHub and try again.');
+        }
       }
     },
     [fetchGitHubFiles]

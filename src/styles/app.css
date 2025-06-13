@@ -112,7 +112,7 @@ h2 {
   height: 100vh;
   backdrop-filter: blur(6px);
   z-index: 1000;
-  pointer-events: none;
+
 }
 
 .menu-dropdown button {
@@ -412,12 +412,18 @@ h2 {
  .popup-options {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: .5rem;
   height: 4rem;
  }
 
+ .popup-options .button {
+  width: auto;
+ }
 
-
+ .popup-options .button.taskActive{
+  background-color: #9bfbdb;
+ }
 
 
 
@@ -476,6 +482,11 @@ h2 {
   box-shadow: none;
   transition: all 0.3s ease;
 }
+
+.submission-row-container.task-container.taskActive {
+  background-color: #9bfbdb;
+}
+
 @media (max-width: 600px) {
   .submission-row-container {
     padding: 0.6em 1em;
@@ -842,6 +853,11 @@ h2 {
   .button {
     width: 100%;
     font-size: 0.9rem;
+  }
+
+  .popup-overlay {
+    width: 80vw;
+    height: auto;
   }
 }
 
