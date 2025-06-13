@@ -13,9 +13,7 @@ export default function GoogleEventsCard({
     <Card className="container">
       <CardContent>
         <h2>Google Calendar:</h2>
-        {!calendarEvents ? (
-          <GoogleLogin />
-        ) : calendarEvents.length > 0 ? (
+        
           <>
             <div className="calendar-header">
               <h3 className="calendar-title">Upcoming Events</h3>

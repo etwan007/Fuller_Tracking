@@ -12,13 +12,22 @@ export function GitHubLogin({ onLoginSuccess }) {
       const credential = GithubAuthProvider.credentialFromResult(result);
       const accessToken = credential.accessToken;
 
+      if (!accessToken) {
+        throw new Error("Failed to retrieve GitHub access token");
+      }
+
       console.log("GitHub Access Token:", accessToken);
 
+      // Store access token in localStorage
+      localStorage.setItem("github_access_token", accessToken);
+      console.log("GitHub access token stored in localStorage");
+
       if (onLoginSuccess) {
-        onLoginSuccess(accessToken, user);
+        onLoginSuccess(accessToken, user); // Pass accessToken and user to parent
       }
     } catch (error) {
-      // (error handling stays the same)
+      console.error("GitHub login failed:", error);
+      alert("GitHub login failed. Please try again.");
     }
   }
 

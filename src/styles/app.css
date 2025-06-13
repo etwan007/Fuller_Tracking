@@ -49,7 +49,7 @@ h2 {
   z-index: 1000;
   display: flex;
   align-items: center;
-  height: 6rem;
+  height: 2rem;
   width: 3vw;
   justify-content: center;
 }
@@ -78,7 +78,6 @@ h2 {
   flex-direction: column;
   gap: .5rem;
   opacity: 0;
-
   transition:
     opacity 0.1s cubic-bezier(0.5,0,1,1),
     translate 1s ease-in-out;
@@ -96,7 +95,6 @@ h2 {
 
 }
 
-
 .blur-overlay {
   position: fixed;
   top: 0;
@@ -112,7 +110,7 @@ h2 {
   background-color: transparent;
   border: none;
   padding: 0;
-  width: auto;
+  width: 100%; /* Ensure buttons take full width */
   height: auto;
   display: flex;
   align-items: center;
@@ -365,21 +363,12 @@ h2 {
   margin-right: 0;
 }
 
-/* <h2>
-          <a
-            href={username ? `https:ithub.com/${username}` : "https://github.com
-            target="_blank"
-            rel="noreferrer"
-            style={{ color: "inherit", textDecoration: "none" }}
-          >
-            GitHub Repositories
-          </a>
-        </h2>
+
 
 
 
 .popup-overlay {
-  position: fixed; */
+  position: fixed;
   justify-self: center;
   align-self: center;
   width: 50vw;
@@ -387,6 +376,7 @@ h2 {
   transition: all .3s ease-in;
   display: flex;
   z-index: 1001;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.263);
 }
 
 .popup-details p {
@@ -505,6 +495,7 @@ h2 {
   flex-direction: column;
   gap: .5rem 0;
   margin-top: 1rem;
+  width: 100%;
 }
 
 .submission-row-container {
@@ -601,7 +592,7 @@ h2 {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: left;
-  gap: 1.5rem 1rem;
+  gap: .5rem;
   max-width: 900px;
 }
 
@@ -613,11 +604,11 @@ h2 {
   transition: all 0.3s ease;
   color: #222;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.263);
+  margin: 0;
 }
 .repo-list a:hover {
   background-color: #f0f0f0;
   transform: translateY(-2px);
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.263);
 }
 
 /* === GOOGLE EVENTS CARD (GoogleEventsCard) === */
@@ -782,6 +773,130 @@ h2 {
 .form-section,
 .ai-breakdown-card {
   flex: 1 1 350px;
+}
+
+/* === MEDIA QUERIES === */
+@media (max-width: 600px) {
+  .header {
+    width: 100%;
+    flex-direction: column;
+
+  }
+
+  .header .main-title {
+    font-size: 3rem;
+  }
+
+  .login-menu {
+    margin-top: .5rem;
+  }
+
+  .menu-dropdown {
+    left: 2rem;
+    margin-top: 2rem;
+  }
+
+  .main-container {
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    justify-items: center;
+  }
+
+  .row1-container,
+  .row2-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    justify-items: center;
+  }
+
+  .container {
+    width: 100%;
+
+  }
+
+  .repo-list {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .repo-list a {
+    width: 100%;
+    text-align: center;
+  }
+
+  .add-event-modal-form {
+    width: 90%;
+  }
+
+  .button {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+}
+
+/* @media (max-width: 550px) {
+  body {
+    padding: 0;
+    text-align: center;
+  }
+h
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .row1-container,
+  .row2-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .repo-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .add-event-modal-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+  }
+} */
+
+/* Fix empty rulesets */
+.header-item,
+.submission-cell {
+  padding: 0.5rem;
 }
 
 

@@ -221,11 +221,11 @@ export default function App() {
     const interval = setInterval(() => {
       fetchFormResponses();
       fetchGitHubFiles();
-      console.log(githubData.login);
+      console.log(githubData?.user?.login || "No GitHub user logged in"); // Fix: Safely access login
     }, 60000); // 60,000 ms = 60 secondsd
 
     return () => clearInterval(interval); // * Cleanup on unmount
-  }, [fetchCalendar, fetchFormResponses, fetchGitHubFiles]);
+  }, [fetchCalendar, fetchFormResponses, fetchGitHubFiles, githubData]);
 
   const breakdownToShow = currentBreakdown || aiSuggestion;
 
@@ -261,6 +261,7 @@ export default function App() {
             githubData={githubData}
             githubError={githubError}
             githubUsername={githubUsername}
+            accessToken={githubData?.accessToken}
           />
 
           <GoogleEventsCard
