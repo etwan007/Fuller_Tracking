@@ -1,22 +1,17 @@
-// components/GitHubRepoSync.jsx
+// GitHub Repository List Component
 import { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import {
   collection,
-  doc,
-  setDoc,
   onSnapshot,
   query,
   where,
-  getDocs,
-  deleteDoc,
 } from "firebase/firestore";
+import { API_ENDPOINTS, LOCAL_STORAGE_KEYS, POLLING_INTERVALS } from "../constants";
 
-export default function GitHubRepoSync({ accessToken: propAccessToken, githubError }) {
-  const [repos, setRepos] = useState([]);
+export default function GitHubRepoList() {  const [repos, setRepos] = useState([]);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  let accessToken = propAccessToken; // Use a local variable to manage accessToken
 
   useEffect(() => {
     const unsubAuth = auth.onAuthStateChanged((u) => {
@@ -25,22 +20,15 @@ export default function GitHubRepoSync({ accessToken: propAccessToken, githubErr
     });
     return () => unsubAuth();
   }, []);
+
   useEffect(() => {
     if (!user) {
       console.warn("User is not authenticated");
       return;
-    }
-
-    // Fallback to local storage if accessToken is not provided
+    }    const accessToken = localStorage.getItem(LOCAL_STORAGE_KEYS.GITHUB_ACCESS_TOKEN);
     if (!accessToken) {
-      const tokenFromStorage = localStorage.getItem("github_access_token");
-      if (tokenFromStorage) {
-        console.log("Using access token from local storage");
-        accessToken = tokenFromStorage;
-      } else {
-        console.error("Access token is undefined and not found in local storage");
-        return;
-      }
+      console.error("No GitHub access token found");
+      return;
     }
 
     // Sync repositories from GitHub to Firebase database
@@ -48,8 +36,8 @@ export default function GitHubRepoSync({ accessToken: propAccessToken, githubErr
       try {
         setIsLoading(true);
         console.log("Syncing repositories from GitHub...");
-        
-        const response = await fetch("/api/github-sync", {
+
+        const response = await fetch(API_ENDPOINTS.GITHUB_SYNC, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -66,7 +54,9 @@ export default function GitHubRepoSync({ accessToken: propAccessToken, githubErr
             return;
           }
           throw new Error(`GitHub sync failed: ${response.status} ${response.statusText}`);
-        }        const syncResult = await response.json();
+        }
+        
+        const syncResult = await response.json();
         console.log("GitHub sync completed:", syncResult);
         
         setIsLoading(false);
@@ -74,16 +64,14 @@ export default function GitHubRepoSync({ accessToken: propAccessToken, githubErr
         console.error("Failed to sync repositories:", err);
         setIsLoading(false);
       }
-    };
-
-    // Initial sync
+    };    // Initial sync
     syncRepositories();
 
-    // Set up periodic sync every 2 minutes
-    const interval = setInterval(syncRepositories, 60000);
+    // Set up periodic sync
+    const interval = setInterval(syncRepositories, POLLING_INTERVALS.GITHUB_SYNC);
 
     return () => clearInterval(interval);
-  }, [user, accessToken]);
+  }, [user]);
 
   useEffect(() => {
     if (!user) {

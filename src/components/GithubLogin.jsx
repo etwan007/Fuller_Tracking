@@ -1,5 +1,6 @@
 import { signInWithPopup, GithubAuthProvider, fetchSignInMethodsForEmail, linkWithCredential } from "firebase/auth";
-import { auth } from "../firebase"; // adjust path as needed
+import { auth } from "../firebase";
+import { LOCAL_STORAGE_KEYS } from "../constants";
 
 const githubProvider = new GithubAuthProvider();
 // Enhanced OAuth scopes for better repository management
@@ -20,10 +21,8 @@ export function GitHubLogin({ onLoginSuccess }) {
         throw new Error("Failed to retrieve GitHub access token");
       }
 
-      console.log("GitHub Access Token:", accessToken);
-
-      // Store access token in localStorage
-      localStorage.setItem("github_access_token", accessToken);
+      console.log("GitHub Access Token:", accessToken);      // Store access token in localStorage
+      localStorage.setItem(LOCAL_STORAGE_KEYS.GITHUB_ACCESS_TOKEN, accessToken);
       console.log("GitHub access token stored in localStorage");
 
       if (onLoginSuccess) {
@@ -68,8 +67,8 @@ export function GitHubLogin({ onLoginSuccess }) {
 
 // Call this function after a successful sign-in with the existing provider (e.g., Google)
 export async function linkPendingGithubCredential() {
-  const shouldLink = localStorage.getItem('pendingGithubLink');
-  const stored = localStorage.getItem('pendingGithubCredential');
+  const shouldLink = localStorage.getItem(LOCAL_STORAGE_KEYS.PENDING_GITHUB_LINK);
+  const stored = localStorage.getItem(LOCAL_STORAGE_KEYS.PENDING_GITHUB_CREDENTIAL);
   if (!shouldLink || !stored) return;
   try {
     const credentialObj = JSON.parse(stored);
@@ -80,13 +79,13 @@ export async function linkPendingGithubCredential() {
       await linkWithCredential(user, credential);
       alert('Your GitHub account has been linked successfully!');
       console.log("GitHub User Info:", user);
-      localStorage.removeItem('pendingGithubCredential');
-      localStorage.removeItem('pendingGithubLink');
+      localStorage.removeItem(LOCAL_STORAGE_KEYS.PENDING_GITHUB_CREDENTIAL);
+      localStorage.removeItem(LOCAL_STORAGE_KEYS.PENDING_GITHUB_LINK);
     }
   } catch (err) {
     console.error('Error linking GitHub credential:', err);
     alert('Failed to link your GitHub account. Please try again.');
-    localStorage.removeItem('pendingGithubCredential');
-    localStorage.removeItem('pendingGithubLink');
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.PENDING_GITHUB_CREDENTIAL);
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.PENDING_GITHUB_LINK);
   }
 }

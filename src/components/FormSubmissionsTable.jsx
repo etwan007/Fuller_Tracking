@@ -1,4 +1,6 @@
 
+import PropTypes from 'prop-types';
+
 export default function FormSubmissionsTable({ formResponses }) {
   const headers = formResponses?.[0] || ['Time Submitted', 'Description', 'Due Date'];
   const dataRows = formResponses?.slice(1) || [];
@@ -31,3 +33,7 @@ export default function FormSubmissionsTable({ formResponses }) {
     </div>
   );
 }
+
+FormSubmissionsTable.propTypes = {
+  formResponses: PropTypes.arrayOf(PropTypes.array),
+};

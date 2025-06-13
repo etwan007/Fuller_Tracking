@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 export default function AILoader({ loading }) {
   if (!loading) return null;
   return (
@@ -7,3 +9,7 @@ export default function AILoader({ loading }) {
     </div>
   );
 }
+
+AILoader.propTypes = {
+  loading: PropTypes.bool.isRequired,
+};

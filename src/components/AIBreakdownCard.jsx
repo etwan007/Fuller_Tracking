@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { Card, CardContent } from "./Card";
 import { Button } from "./Button";
 import AILoader from "./AILoader";
@@ -75,8 +76,7 @@ export default function AIBreakdownCard({
                 onChange={(e) => setClarification(e.target.value)}
                 rows={3}
                 disabled={loading}
-              />
-              <Button
+              />              <Button
                 onClick={handleClarification}
                 disabled={loading || !clarification.trim()}
               >
@@ -89,3 +89,17 @@ export default function AIBreakdownCard({
     </div>
   );
 }
+
+AIBreakdownCard.propTypes = {
+  projectName: PropTypes.string.isRequired,
+  setProjectName: PropTypes.func.isRequired,
+  clarification: PropTypes.string.isRequired,
+  setClarification: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
+  breakdownToShow: PropTypes.string,
+  selectedBullet: PropTypes.string.isRequired,
+  setSelectedBullet: PropTypes.func.isRequired,
+  handleAISuggestion: PropTypes.func.isRequired,
+  handleClarification: PropTypes.func.isRequired,
+  handleSelectBullet: PropTypes.func.isRequired,
+};
